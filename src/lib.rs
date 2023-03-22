@@ -1,14 +1,11 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use std::ffi::{c_char, c_int};
+
+#[no_mangle]
+pub extern "system" fn unlink(_path: *const c_char) -> c_int {
+    0
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[no_mangle]
+pub extern "system" fn unlinkat(_dir_fd: c_int, _path: *const c_char, _flags: c_int) -> c_int {
+    0
 }
