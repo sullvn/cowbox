@@ -16,27 +16,24 @@ pub extern "system" fn unlinkat_new(_dir_fd: c_int, _path: *const c_char, _flags
 }
 
 #[repr(C)]
-struct InterposedUnlink {
-    replacement: unsafe extern "system" fn(*const c_char) -> c_int,
-    original: unsafe extern "system" fn(*const c_char) -> c_int,
-}
-
-#[repr(C)]
-struct InterposedUnlinkAt {
-    replacement: unsafe extern "system" fn(c_int, *const c_char, c_int) -> c_int,
-    original: unsafe extern "system" fn(c_int, *const c_char, c_int) -> c_int,
+struct Interposed<T> {
+    replacement: T,
+    original: T,
 }
 
 #[used]
 #[link_section = "__DATA,__interpose"]
-static INTERPOSE_UNLINK: InterposedUnlink = InterposedUnlink {
-    replacement: unlink_new,
-    original: unlink,
-};
+static INTERPOSE_UNLINK: Interposed<unsafe extern "system" fn(*const c_char) -> c_int> =
+    Interposed {
+        replacement: unlink_new,
+        original: unlink,
+    };
 
 #[used]
 #[link_section = "__DATA,__interpose"]
-static INTERPOSE_UNLINKAT: InterposedUnlinkAt = InterposedUnlinkAt {
+static INTERPOSE_UNLINKAT: Interposed<
+    unsafe extern "system" fn(c_int, *const c_char, c_int) -> c_int,
+> = Interposed {
     replacement: unlinkat_new,
     original: unlinkat,
 };
