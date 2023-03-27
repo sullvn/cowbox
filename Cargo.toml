@@ -6,9 +6,16 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib"]
 
-[dependencies]
-libc = "0.2.140"
-
 [profile.release]
 lto = "fat"
 strip = "symbols"
+
+[dependencies]
+libc = "0.2.140"
+
+[dependencies.windows-sys]
+version = "0.45.0"
+features = [
+  "Win32_Foundation",
+  "Win32_Storage_FileSystem",
+]

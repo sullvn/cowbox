@@ -1,11 +1,12 @@
-use std::ffi::{c_char, c_int};
+use windows_sys::core::{PCSTR, PCWSTR};
+use windows_sys::Win32::Foundation::BOOL;
 
 #[no_mangle]
-pub extern "system" fn unlink(_path: *const c_char) -> c_int {
+pub unsafe extern "system" fn DeleteFileA(_path: PCSTR) -> BOOL {
     0
 }
 
 #[no_mangle]
-pub extern "system" fn unlinkat(_dir_fd: c_int, _path: *const c_char, _flags: c_int) -> c_int {
+pub unsafe extern "system" fn DeleteFileW(_path: PCWSTR) -> BOOL {
     0
 }
