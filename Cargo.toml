@@ -10,12 +10,27 @@ crate-type = ["cdylib"]
 lto = "fat"
 strip = "symbols"
 
-[dependencies]
+[target.'cfg(unix)'.dependencies]
 libc = "0.2.140"
 
-[dependencies.windows-sys]
+[target.'cfg(windows)'.dependencies.windows-sys]
 version = "0.45.0"
 features = [
   "Win32_Foundation",
   "Win32_Storage_FileSystem",
 ]
+
+[target.'cfg(windows)'.build-dependencies]
+vcpkg = "0.2.15"
+
+[package.metadata.vcpkg]
+git = "https://github.com/microsoft/vcpkg"
+rev = "2023.02.24"
+
+[package.metadata.vcpkg.target]
+i686-pc-windows-msvc = {
+  dependencies = ["detours"]
+}
+x86_64-pc-windows-msvc = {
+  dependencies = ["detours"]
+}
