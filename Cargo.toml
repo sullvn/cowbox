@@ -18,6 +18,7 @@ version = "0.45.0"
 features = [
   "Win32_Foundation",
   "Win32_Storage_FileSystem",
+  "Win32_System_SystemServices",
   "Win32_System_Threading",
 ]
 
@@ -29,9 +30,5 @@ git = "https://github.com/microsoft/vcpkg"
 rev = "2023.02.24"
 
 [package.metadata.vcpkg.target]
-i686-pc-windows-msvc = {
-  dependencies = ["detours"]
-}
-x86_64-pc-windows-msvc = {
-  dependencies = ["detours"]
-}
+i686-pc-windows-msvc = { triplet = "x86-windows-static-md", dependencies = ["detours"] }
+x86_64-pc-windows-msvc = { triplet = "x64-windows-static-md", dependencies = ["detours"] }
