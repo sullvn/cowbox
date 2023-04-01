@@ -55,5 +55,5 @@ unsafe extern "system" fn DllMain(
         DetourTransactionCommit();
     }
 
-    return TRUE;
+    TRUE
 }
