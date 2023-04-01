@@ -19,7 +19,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-      - name: Install Vcpkg dependencies
+      - name: Install vcpkg dependencies
         if: runner.os == 'Windows'
         run: |
           cargo install cargo-vcpkg
