@@ -1,6 +1,0 @@
-;
-; https://learn.microsoft.com/en-us/cpp/build/reference/module-definition-dot-def-files
-;
-LIBRARY COWBOX
-EXPORTS
-  DetourFinishHelperProcess @1 NONAME
