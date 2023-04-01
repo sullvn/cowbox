@@ -1,0 +1,78 @@
+name: Release
+on:
+  push:
+    tags: 'v[0-9]+.[0-9]+.[0-9]+'
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+      - name: Get host triple
+        id: host-triple
+        shell: python
+        run: |
+          import os
+          import re
+          import subprocess
+
+          rustc_info = subprocess.run(
+              ['rustc', '--version', '--verbose'],
+              capture_output = True,
+              text = True
+          ).stdout
+
+          host_triple = re.search(
+              r'host:\s*(\S+)',
+              rustc_info
+          ).group(1)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'w') as f:
+              f.write('result=' + host_triple)
+      - name: Build binary
+        run: cargo build --release
+      - name: Rename binary
+        shell: bash
+        run: |
+          BINARY_FILENAME="${{
+              format(
+                'shai-{0}-{1}',
+                steps.host-triple.outputs.result,
+                github.ref_name
+              )
+            }}"
+
+          mkdir artifacts
+          mv target/release/shai artifacts/$BINARY_FILENAME
+      - name: Upload binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }} Build
+          path: artifacts/*
+          if-no-files-found: error
+  publish-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: artifacts/*/*
