@@ -1,4 +1,3 @@
-use libc;
 use std::ffi::{c_char, c_int};
 
 #[no_mangle]
