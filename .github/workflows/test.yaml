@@ -20,7 +20,7 @@ jobs:
         with:
           components: clippy
       - name: Install Vcpkg dependencies
-        if: ${{ runner.os == "Windows" }}
+        if: runner.os == 'Windows'
         run: |
           cargo install cargo-vcpkg
           cargo vcpkg build
