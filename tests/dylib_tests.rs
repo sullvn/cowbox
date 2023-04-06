@@ -1,3 +1,5 @@
+#![cfg(windows)]
+
 use std::fs::{self, File};
 use std::io::Result;
 use std::path::PathBuf;
@@ -79,6 +81,7 @@ fn sandboxed_rm_run(_tmp_dir_path: &TempDir, rm_file_path: &TempPath) -> Result<
         "powershell -Command \"Remove-Item {}\"",
         &rm_file_path.to_str().unwrap()
     );
+
     unsafe {
         let si: STARTUPINFOA = zeroed();
         let mut pi: PROCESS_INFORMATION = zeroed();
@@ -104,4 +107,6 @@ fn sandboxed_rm_run(_tmp_dir_path: &TempDir, rm_file_path: &TempPath) -> Result<
 
         assert_eq!(result, TRUE, "rm command couldn't be executed");
     }
+
+    Ok(())
 }
