@@ -11,4 +11,4 @@ mod windows;
 mod detours;
 
 #[cfg(target_os = "windows")]
-pub use detours::DetourCreateProcessWithDllEx;
+pub use detours::DetourCreateProcessWithDllExA;

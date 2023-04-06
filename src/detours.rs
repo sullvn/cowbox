@@ -1,6 +1,6 @@
 use core::ffi::{c_int, c_long, c_void};
-use windows_sys::core::PSTR;
-use windows_sys::Win32::Foundation::{BOOL, HANDLE, HINSTANCE, HWND};
+use windows_sys::core::{PCSTR, PSTR};
+use windows_sys::Win32::Foundation::{BOOL, HANDLE, HMODULE, HWND};
 use windows_sys::Win32::Security::SECURITY_ATTRIBUTES;
 use windows_sys::Win32::System::Threading::{
     PROCESS_CREATION_FLAGS, PROCESS_INFORMATION, STARTUPINFOA,
@@ -20,7 +20,7 @@ extern "system" {
     #[allow(dead_code)]
     pub fn DetourFinishHelperProcess(
         window_handle: HWND,
-        dll_handle: HINSTANCE,
+        dll_handle: HMODULE,
         lpstr: PSTR,
         int: c_int,
     );
@@ -40,7 +40,7 @@ type DetourCreateProcessRoutineA = extern "system" fn(
 ) -> BOOL;
 
 extern "system" {
-    pub fn DetourCreateProcessWithDllEx(
+    pub fn DetourCreateProcessWithDllExA(
         application_name: PCSTR,
         command_line: PSTR,
         process_attributes: *const SECURITY_ATTRIBUTES,
