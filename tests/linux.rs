@@ -1,8 +1,6 @@
-#![cfg(target_os = "macos")]
+#![cfg(target_os = "linux")]
 
-use std::fs;
 use std::io::Result;
-use std::path::PathBuf;
 use std::process::Command;
 
 mod common;
