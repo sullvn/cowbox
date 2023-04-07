@@ -1,6 +1,6 @@
 use core::ffi::{c_ulong, c_void};
 use windows_sys::core::{PCSTR, PCWSTR};
-use windows_sys::Win32::Foundation::{BOOL, HINSTANCE, TRUE};
+use windows_sys::Win32::Foundation::{BOOL, HMODULE, TRUE};
 use windows_sys::Win32::Storage::FileSystem::{DeleteFileA, DeleteFileW};
 use windows_sys::Win32::System::SystemServices::{DLL_PROCESS_ATTACH, DLL_PROCESS_DETACH};
 use windows_sys::Win32::System::Threading::GetCurrentThread;
@@ -25,7 +25,7 @@ extern "system" fn DeleteFileWHook(_path: PCWSTR) -> BOOL {
 ///
 #[no_mangle]
 unsafe extern "system" fn DllMain(
-    _dll_handle: HINSTANCE,
+    _dll_handle: HMODULE,
     reason: c_ulong,
     _reserved: *mut c_void,
 ) -> BOOL {
