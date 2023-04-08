@@ -10,43 +10,47 @@ use common::{run_test_rm, RmResult};
 
 #[test]
 fn normal_rm() -> Result<()> {
-    run_test_rm(RmResult::Removed, |file_path, _| {
-        let mut cmd = Command::new("rm");
-        cmd.arg(file_path).env_clear();
+    let rm_result = run_test_rm(|file_path, _| {
+        Ok(Command::new("rm")
+            .arg(file_path)
+            .env_clear()
+            .status()?
+            .success())
+    });
 
-        assert!(cmd.status()?.success());
-
-        Ok(())
-    })
+    assert_eq!(rm_result, RmResult::NotRemoved);
+    Ok(())
 }
 
 #[test]
 fn sandboxed_sip_rm() -> Result<()> {
-    run_test_rm(RmResult::Removed, |file_path, _| {
-        let mut cmd = Command::new("rm");
-        cmd.arg(file_path)
+    let rm_result = run_test_rm(|file_path, _| {
+        Ok(Command::new("rm")
+            .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib");
+            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
+            .status()?
+            .success())
+    });
 
-        assert!(cmd.status()?.success());
-
-        Ok(())
-    })
+    assert_eq!(rm_result, RmResult::Removed);
+    Ok(())
 }
 
 #[test]
 fn sandboxed_rm() -> Result<()> {
-    run_test_rm(RmResult::NotRemoved, |file_path, tmp_dir_path| {
+    let rm_result = run_test_rm(|file_path, tmp_dir_path| {
         let rm_copy_path: PathBuf = [tmp_dir_path.as_ref(), "rm".as_ref()].iter().collect();
         fs::copy("/bin/rm", &rm_copy_path)?;
 
-        let mut cmd = Command::new(rm_copy_path);
-        cmd.arg(file_path)
+        Ok(Command::new(rm_copy_path)
+            .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib");
+            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
+            .status()?
+            .success())
+    });
 
-        assert!(cmd.status()?.success());
-
-        Ok(())
-    })
+    assert_eq!(rm_result, RmResult::NotRemoved);
+    Ok(())
 }
