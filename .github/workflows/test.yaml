@@ -32,5 +32,18 @@ jobs:
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Build dylib
         run: cargo build --release
+      - name: Build dylib (Windows x86)
+        if: runner.os == 'Windows'
+        run: |
+          cargo build --release --target i686-pc-windows-msvc
+          cp \
+            target\release\cowbox.dll \
+            target\release\cowbox64.dll
+          cp \
+            target\i686-pc-windows-msvc\release\cowbox.dll \
+            target\release\cowbox32.dll
       - name: Run tests
         run: cargo test
+      - name: Run tests (Windows x86)
+        if: runner.os == 'Windows'
+        run: cargo test --target i686-pc-windows-msvc

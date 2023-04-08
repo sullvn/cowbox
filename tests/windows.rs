@@ -120,6 +120,7 @@ where
     F: FnOnce(&STARTUPINFOA, &mut PROCESS_INFORMATION, &TempPath, &TempDir) -> BOOL,
 {
     let mut exit_code: ExitCode = 0;
+
     let rm_result = run_test_rm(|file_path, tmp_dir| {
         unsafe {
             let si: STARTUPINFOA = zeroed();

@@ -14,7 +14,7 @@ fn normal_rm() -> Result<()> {
             .env_clear()
             .status()?
             .success())
-    });
+    })?;
 
     assert_eq!(rm_result, RmResult::Removed);
     Ok(())
@@ -29,7 +29,7 @@ fn sandboxed_rm() -> Result<()> {
             .env("LD_PRELOAD", "target/release/libcowbox.so")
             .status()?
             .success())
-    });
+    })?;
 
     assert_eq!(rm_result, RmResult::NotRemoved);
     Ok(())

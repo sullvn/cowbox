@@ -16,9 +16,9 @@ fn normal_rm() -> Result<()> {
             .env_clear()
             .status()?
             .success())
-    });
+    })?;
 
-    assert_eq!(rm_result, RmResult::NotRemoved);
+    assert_eq!(rm_result, RmResult::Removed);
     Ok(())
 }
 
@@ -31,7 +31,7 @@ fn sandboxed_sip_rm() -> Result<()> {
             .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
             .status()?
             .success())
-    });
+    })?;
 
     assert_eq!(rm_result, RmResult::Removed);
     Ok(())
@@ -49,7 +49,7 @@ fn sandboxed_rm() -> Result<()> {
             .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
             .status()?
             .success())
-    });
+    })?;
 
     assert_eq!(rm_result, RmResult::NotRemoved);
     Ok(())
