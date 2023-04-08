@@ -8,26 +8,29 @@ use common::{run_test_rm, RmResult};
 
 #[test]
 fn normal_rm() -> Result<()> {
-    run_test_rm(RmResult::Removed, |file_path, _| {
-        let mut cmd = Command::new("rm");
-        cmd.arg(file_path).env_clear();
+    let rm_result = run_test_rm(|file_path, _| {
+        Ok(Command::new("rm")
+            .arg(file_path)
+            .env_clear()
+            .status()?
+            .success())
+    })?;
 
-        assert!(cmd.status()?.success());
-
-        Ok(())
-    })
+    assert_eq!(rm_result, RmResult::Removed);
+    Ok(())
 }
 
 #[test]
 fn sandboxed_rm() -> Result<()> {
-    run_test_rm(RmResult::NotRemoved, |file_path, _| {
-        let mut cmd = Command::new("rm");
-        cmd.arg(file_path)
+    let rm_result = run_test_rm(|file_path, _| {
+        Ok(Command::new("rm")
+            .arg(file_path)
             .env_clear()
-            .env("LD_PRELOAD", "target/release/libcowbox.so");
+            .env("LD_PRELOAD", "target/release/libcowbox.so")
+            .status()?
+            .success())
+    })?;
 
-        assert!(cmd.status()?.success());
-
-        Ok(())
-    })
+    assert_eq!(rm_result, RmResult::NotRemoved);
+    Ok(())
 }
