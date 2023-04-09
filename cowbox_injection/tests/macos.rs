@@ -28,7 +28,10 @@ fn sandboxed_sip_rm() -> Result<()> {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
+            .env(
+                "DYLD_INSERT_LIBRARIES",
+                "../target/release/libcowbox_injection.dylib",
+            )
             .status()?
             .success())
     })?;
@@ -46,7 +49,10 @@ fn sandboxed_rm() -> Result<()> {
         Ok(Command::new(rm_copy_path)
             .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", "target/release/libcowbox.dylib")
+            .env(
+                "DYLD_INSERT_LIBRARIES",
+                "../target/release/libcowbox_injection.dylib",
+            )
             .status()?
             .success())
     })?;
