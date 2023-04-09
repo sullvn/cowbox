@@ -26,7 +26,7 @@ fn sandboxed_rm() -> Result<()> {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
-            .env("LD_PRELOAD", "target/release/libcowbox.so")
+            .env("LD_PRELOAD", "../target/release/libcowbox_injection.so")
             .status()?
             .success())
     })?;

@@ -61,8 +61,8 @@ fn sandboxed_rm() -> Result<()> {
 
 fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch) -> Result<()> {
     let dll_path = match dll_arch {
-        Arch::X86 => "target\\release\\cowbox32.dll",
-        Arch::X86_64 => "target\\release\\cowbox64.dll",
+        Arch::X86 => "..\\target\\release\\cowbox_injection32.dll",
+        Arch::X86_64 => "..\\target\\release\\cowbox_injection64.dll",
     };
 
     let rm_program = match rm_arch {

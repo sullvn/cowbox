@@ -38,11 +38,11 @@ jobs:
         run: |
           cargo build --release --target i686-pc-windows-msvc
           cp `
-            target\i686-pc-windows-msvc\release\cowbox.dll `
-            target\release\cowbox32.dll
+            target\i686-pc-windows-msvc\release\cowbox_injection.dll `
+            target\release\cowbox_injection32.dll
           cp `
-            target\release\cowbox.dll `
-            target\release\cowbox64.dll
+            target\release\cowbox_injection.dll `
+            target\release\cowbox_injection64.dll
       - name: Run tests
         run: cargo test
       - name: Run tests (Windows x86)
