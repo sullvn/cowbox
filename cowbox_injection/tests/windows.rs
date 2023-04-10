@@ -6,7 +6,9 @@ use std::io::Result;
 use std::mem::zeroed;
 use std::ptr;
 use tempfile::{TempDir, TempPath};
-use windows_sys::Win32::Foundation::{CloseHandle, BOOL, FALSE, STATUS_INVALID_IMAGE_FORMAT, TRUE};
+use windows_sys::Win32::Foundation::{
+    CloseHandle, BOOL, FALSE, STATUS_DLL_NOT_FOUND, STATUS_INVALID_IMAGE_FORMAT, TRUE,
+};
 use windows_sys::Win32::System::Threading::{
     CreateProcessA, GetExitCodeProcess, WaitForSingleObject, INFINITE, PROCESS_INFORMATION,
     STARTUPINFOA,
@@ -68,7 +70,10 @@ fn missing_dylib_rm() -> Result<()> {
         RmResult::NotRemoved,
         "file was unexpectedly removed"
     );
-    assert_eq!(exit_code, 0, "exit code was unexpected");
+    assert_eq!(
+        exit_code, STATUS_DLL_NOT_FOUND as u32,
+        "exit code was unexpected"
+    );
 
     Ok(())
 }
@@ -84,7 +89,7 @@ fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch)
         Arch::X86_64 => "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
     };
 
-    let (rm_result, exit_code) = run_windows_detour_rm(&dll_path, &rm_program)?;
+    let (rm_result, exit_code) = run_windows_detour_rm(dll_path, rm_program)?;
 
     let expected_exit_code: u32 = match (&test_arch, &dll_arch, &rm_arch) {
         (ta, da, _) if ta == da => 0,
