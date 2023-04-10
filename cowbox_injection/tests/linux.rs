@@ -34,3 +34,18 @@ fn sandboxed_rm() -> Result<()> {
     assert_eq!(rm_result, RmResult::NotRemoved);
     Ok(())
 }
+
+#[test]
+fn missing_dylib_rm() -> Result<()> {
+    let rm_result = run_test_rm(|file_path, _| {
+        Ok(Command::new("rm")
+            .arg(file_path)
+            .env_clear()
+            .env("LD_PRELOAD", "../target/release/missing.so")
+            .status()?
+            .success())
+    })?;
+
+    assert_eq!(rm_result, RmResult::Removed);
+    Ok(())
+}
