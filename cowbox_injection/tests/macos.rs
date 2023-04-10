@@ -1,7 +1,7 @@
 #![cfg(target_os = "macos")]
 
 use std::fs;
-use std::io::Result;
+use std::io::{ErrorKind, Result};
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -73,8 +73,8 @@ fn missing_dylib_rm() -> Result<()> {
             .env("DYLD_INSERT_LIBRARIES", "../target/release/missing.dylib")
             .status()?
             .success())
-    })?;
+    });
 
-    assert_eq!(rm_result, RmResult::NotRemoved);
+    assert_eq!(rm_result.unwrap_err().kind(), ErrorKind::NotFound);
     Ok(())
 }

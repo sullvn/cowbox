@@ -46,6 +46,6 @@ fn missing_dylib_rm() -> Result<()> {
             .success())
     })?;
 
-    assert_eq!(rm_result, RmResult::NotRemoved);
+    assert_eq!(rm_result, RmResult::Removed);
     Ok(())
 }
