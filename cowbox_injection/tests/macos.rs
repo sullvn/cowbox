@@ -1,7 +1,7 @@
 #![cfg(target_os = "macos")]
 
 use std::fs;
-use std::io::{ErrorKind, Result};
+use std::io::Result;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -63,18 +63,21 @@ fn sandboxed_rm() -> Result<()> {
 
 #[test]
 fn missing_dylib_rm() -> Result<()> {
+    let mut exit_code: Option<i32> = None;
     let rm_result = run_test_rm(|file_path, tmp_dir_path| {
         let rm_copy_path: PathBuf = [tmp_dir_path.as_ref(), "rm".as_ref()].iter().collect();
         fs::copy("/bin/rm", &rm_copy_path)?;
 
-        Ok(Command::new(rm_copy_path)
+        exit_code = Command::new(rm_copy_path)
             .arg(file_path)
             .env_clear()
             .env("DYLD_INSERT_LIBRARIES", "../target/release/missing.dylib")
             .status()?
-            .success())
-    });
+            .code();
+        Ok(true)
+    })?;
 
-    assert_eq!(rm_result.unwrap_err().kind(), ErrorKind::NotFound);
+    assert_eq!(exit_code, None, "unexpected real exit code");
+    assert_eq!(rm_result, RmResult::NotRemoved);
     Ok(())
 }
