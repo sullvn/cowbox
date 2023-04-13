@@ -5,3 +5,6 @@ edition = "2021"
 
 [dependencies]
 cowbox_injection = { path = "../cowbox_injection" }
+
+[target.'cfg(windows)'.dependencies]
+detours_sys = { path = "../detours_sys" }
