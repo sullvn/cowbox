@@ -25,6 +25,7 @@ name = "cowbox"
 version = "0.1.0"
 dependencies = [
  "cowbox_injection",
+ "detours_sys",
 ]
 
 [[package]]
@@ -55,6 +56,9 @@ dependencies = [
 [[package]]
 name = "detours_sys"
 version = "0.1.0"
+dependencies = [
+ "windows-sys 0.48.0",
+]
 
 [[package]]
 name = "errno"

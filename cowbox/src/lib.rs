@@ -19,7 +19,8 @@ const DYLIB_ENV_KEY: &str = "LD_PRELOAD";
 const DYLIB_ENV_KEY: &str = "DYLD_INSERT_LIBRARIES";
 
 const INJECTION_HASH: u128 = 0;
-const INJECTION_HASH_FILE_NAME = "hash";
+const INJECTION_HASH_FILE_NAME: &str = "hash";
+const INJECTION_DIR_NAME: &str = "injection";
 
 #[cfg(target_os = "linux")]
 pub fn injection_binary() -> &'static [u8] {
@@ -37,8 +38,8 @@ pub fn injection_binary() -> &'static [u8] {
 }
 
 fn injection_lib_exists<P: AsRef<Path>>(lib_dir: P) -> Option<bool> {
-    let lib_path: PathBuf = [lib_dir, "injection", INJECTION_LIB_FILE_NAME].iter().collect();
-    let hash_path: PathBuf = [lib_dir, "injection", INJECTION_HASH_FILE_NAME].iter().collect();
+    let lib_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_LIB_FILE_NAME].iter().collect();
+    let hash_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_HASH_FILE_NAME].iter().collect();
 
     lib_path.try_exists().ok()?;
 
@@ -51,7 +52,7 @@ fn injection_lib_exists<P: AsRef<Path>>(lib_dir: P) -> Option<bool> {
 fn injection_lib_create<P: AsRef<Path>>(lib_dir: P) -> Result<()> {
     let hash_str = format!("{:x}", INJECTION_HASH);
 
-    let lib_dir: PathBuf = [lib_dir, "injection"].iter().collect();
+    let lib_dir: PathBuf = [lib_dir, INJECTION_DIR_NAME].iter().collect();
     let lib_path: PathBuf = [lib_dir, INJECTION_LIB_FILE_NAME].iter().collect();
     let hash_path: PathBuf = [lib_dir, INJECTION_HASH_FILE_NAME].iter().collect();
 
@@ -78,7 +79,7 @@ where
     T: AsRef<OsStr>,
     A: IntoIterator<Item = T>,
 {
-    let lib_path: PathBuf = [lib_dir, "injection", INJECTION_LIB_FILE_NAME].iter().collect();
+    let lib_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_LIB_FILE_NAME].iter().collect();
     let exit_code = Command::new(program)
         .args(args)
         .env(DYLIB_ENV_KEY, lib_path)
@@ -98,7 +99,23 @@ where
     unsafe {
         let si: STARTUPINFOA = zeroed();
         let mut pi: PROCESS_INFORMATION = zeroed();
-        let result = create_process_fn(&si, &mut pi, file_path, tmp_dir);
+        let result = DetourCreateProcessWithDllExA(
+            ptr::null(), // TODO: use program
+            rm_cmd.into_bytes_with_nul().as_mut_ptr(), // TODO: use args
+            ptr::null(),
+            ptr::null(),
+            FALSE,
+            0,
+            ptr::null(),
+            ptr::null(),
+            si,
+            pi,
+            CString::new(dll_path)
+                .unwrap()
+                .into_bytes_with_nul()
+                .as_ptr(),
+            None,
+        );
         assert_eq!(result, TRUE, "process couldn't be created executed");
 
         WaitForSingleObject(pi.hProcess, INFINITE);
