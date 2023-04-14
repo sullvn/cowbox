@@ -1,6 +1,6 @@
 #![cfg(target_os = "windows")]
 
-use cowbox_injection::DetourCreateProcessWithDllExA;
+use detours_sys::DetourCreateProcessWithDllExA;
 use std::ffi::CString;
 use std::io::Result;
 use std::mem::zeroed;
