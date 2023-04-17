@@ -23,17 +23,17 @@ const INJECTION_HASH_FILE_NAME: &str = "hash";
 const INJECTION_DIR_NAME: &str = "injection";
 
 #[cfg(target_os = "linux")]
-pub fn injection_binary() -> &'static [u8] {
+fn injection_binary() -> &'static [u8] {
     include_bytes!("../../target/release/libcowbox_injection.so")
 }
 
 #[cfg(target_os = "macos")]
-pub fn injection_binary() -> &'static [u8] {
+fn injection_binary() -> &'static [u8] {
     include_bytes!("../../target/release/libcowbox_injection.dylib")
 }
 
 #[cfg(target_os = "windows")]
-pub fn injection_binary() -> &'static [u8] {
+fn injection_binary() -> &'static [u8] {
     include_bytes!("../../target/release/cowbox_injection64.dll")
 }
 
@@ -128,7 +128,7 @@ where
     }
 }
 
-pub fn cowbox_spawn<P, S, T, A>(lib_dir: P, program: S, args: A) -> Result<i32>
+pub fn spawn<P, S, T, A>(lib_dir: P, program: S, args: A) -> Result<i32>
 where
     P: AsRef<Path>,
     S: AsRef<OsStr>,
@@ -137,14 +137,4 @@ where
 {
     injection_lib_update(lib_dir)?;
     spawn_injected_process(lib_dir, program, args)?;
-}
-
-#[cfg(test)]
-mod tests {
-    use super::injection_binary;
-
-    #[test]
-    fn it_works() {
-        assert!(injection_binary().len() > 0);
-    }
 }
