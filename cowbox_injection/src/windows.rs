@@ -1,14 +1,13 @@
 use core::ffi::{c_ulong, c_void};
+use detours_sys::{
+    DetourAttach, DetourDetach, DetourIsHelperProcess, DetourRestoreAfterWith,
+    DetourTransactionBegin, DetourTransactionCommit, DetourUpdateThread,
+};
 use windows_sys::core::{PCSTR, PCWSTR};
 use windows_sys::Win32::Foundation::{BOOL, HMODULE, TRUE};
 use windows_sys::Win32::Storage::FileSystem::{DeleteFileA, DeleteFileW};
 use windows_sys::Win32::System::SystemServices::{DLL_PROCESS_ATTACH, DLL_PROCESS_DETACH};
 use windows_sys::Win32::System::Threading::GetCurrentThread;
-
-use crate::detours::{
-    DetourAttach, DetourDetach, DetourIsHelperProcess, DetourRestoreAfterWith,
-    DetourTransactionBegin, DetourTransactionCommit, DetourUpdateThread,
-};
 
 #[allow(non_snake_case)]
 extern "system" fn DeleteFileAHook(_path: PCSTR) -> BOOL {

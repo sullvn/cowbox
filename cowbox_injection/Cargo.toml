@@ -9,6 +9,9 @@ crate-type = ["cdylib", "rlib"]
 [target.'cfg(unix)'.dependencies]
 libc = "0.2.140"
 
+[target.'cfg(windows)'.dependencies]
+detours_sys = { path = "../detours_sys" }
+
 [target.'cfg(windows)'.dependencies.windows-sys]
 version = "0.48.0"
 features = [
@@ -19,16 +22,5 @@ features = [
   "Win32_System_Threading",
 ]
 
-[target.'cfg(windows)'.build-dependencies]
-vcpkg = "0.2.15"
-
 [dev-dependencies]
 tempfile = "3.5.0"
-
-[package.metadata.vcpkg]
-git = "https://github.com/microsoft/vcpkg"
-rev = "2023.02.24"
-
-[package.metadata.vcpkg.target]
-i686-pc-windows-msvc = { triplet = "x86-windows-static-md", dependencies = ["detours"] }
-x86_64-pc-windows-msvc = { triplet = "x64-windows-static-md", dependencies = ["detours"] }
