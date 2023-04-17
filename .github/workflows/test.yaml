@@ -24,7 +24,6 @@ jobs:
       - name: Install vcpkg dependencies
         if: runner.os == 'Windows'
         run: |
-          cd cowbox_injection
           cargo install cargo-vcpkg
           cargo vcpkg build --target i686-pc-windows-msvc
           cargo vcpkg build --target x86_64-pc-windows-msvc
