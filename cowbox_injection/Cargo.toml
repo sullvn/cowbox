@@ -23,4 +23,4 @@ features = [
 ]
 
 [dev-dependencies]
-tempfile = "3.5.0"
+cowbox_testing = { path = "../cowbox_testing" }

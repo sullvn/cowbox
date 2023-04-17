@@ -1,5 +1,6 @@
 #![cfg(target_os = "windows")]
 
+use cowbox_testing::{run_test_rm, Arch, RmResult};
 use detours_sys::DetourCreateProcessWithDllExA;
 use std::ffi::CString;
 use std::io::Result;
@@ -13,9 +14,6 @@ use windows_sys::Win32::System::Threading::{
     CreateProcessA, GetExitCodeProcess, WaitForSingleObject, INFINITE, PROCESS_INFORMATION,
     STARTUPINFOA,
 };
-
-mod common;
-use common::{run_test_rm, Arch, RmResult};
 
 type ExitCode = u32;
 
@@ -144,7 +142,7 @@ where
 {
     let mut exit_code: ExitCode = 0;
 
-    let rm_result = run_test_rm(|file_path, tmp_dir| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, tmp_dir| {
         unsafe {
             let si: STARTUPINFOA = zeroed();
             let mut pi: PROCESS_INFORMATION = zeroed();
