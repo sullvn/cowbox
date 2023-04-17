@@ -1,12 +1,11 @@
 #![cfg(target_os = "windows")]
 
-use cowbox_testing::{run_test_rm, Arch, RmResult};
+use cowbox_testing::{run_test_rm, Arch, RmResult, TempDir, TempPath};
 use detours_sys::DetourCreateProcessWithDllExA;
 use std::ffi::CString;
 use std::io::Result;
 use std::mem::zeroed;
 use std::ptr;
-use tempfile::{TempDir, TempPath};
 use windows_sys::Win32::Foundation::{
     CloseHandle, BOOL, FALSE, STATUS_DLL_NOT_FOUND, STATUS_INVALID_IMAGE_FORMAT, TRUE,
 };
