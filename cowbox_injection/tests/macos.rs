@@ -1,16 +1,14 @@
 #![cfg(target_os = "macos")]
 
+use cowbox_testing::{run_test_rm, RmResult};
 use std::fs;
 use std::io::Result;
 use std::path::PathBuf;
 use std::process::Command;
 
-mod common;
-use common::{run_test_rm, RmResult};
-
 #[test]
 fn normal_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, _| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, _| {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
@@ -24,7 +22,7 @@ fn normal_rm() -> Result<()> {
 
 #[test]
 fn sandboxed_sip_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, _| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, _| {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
@@ -42,7 +40,7 @@ fn sandboxed_sip_rm() -> Result<()> {
 
 #[test]
 fn sandboxed_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, tmp_dir_path| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, tmp_dir_path| {
         let rm_copy_path: PathBuf = [tmp_dir_path.as_ref(), "rm".as_ref()].iter().collect();
         fs::copy("/bin/rm", &rm_copy_path)?;
 
@@ -64,7 +62,7 @@ fn sandboxed_rm() -> Result<()> {
 #[test]
 fn missing_dylib_rm() -> Result<()> {
     let mut exit_code: Option<i32> = None;
-    let rm_result = run_test_rm(|file_path, tmp_dir_path| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, tmp_dir_path| {
         let rm_copy_path: PathBuf = [tmp_dir_path.as_ref(), "rm".as_ref()].iter().collect();
         fs::copy("/bin/rm", &rm_copy_path)?;
 

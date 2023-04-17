@@ -1,14 +1,12 @@
 #![cfg(target_os = "linux")]
 
+use cowbox_testing::{run_test_rm, RmResult};
 use std::io::Result;
 use std::process::Command;
 
-mod common;
-use common::{run_test_rm, RmResult};
-
 #[test]
 fn normal_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, _| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, _| {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
@@ -22,7 +20,7 @@ fn normal_rm() -> Result<()> {
 
 #[test]
 fn sandboxed_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, _| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, _| {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
@@ -37,7 +35,7 @@ fn sandboxed_rm() -> Result<()> {
 
 #[test]
 fn missing_dylib_rm() -> Result<()> {
-    let rm_result = run_test_rm(|file_path, _| {
+    let rm_result = run_test_rm(env!("CARGO_TARGET_TMPDIR"), |file_path, _| {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()

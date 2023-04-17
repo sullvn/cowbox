@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::path::Path;
 use std::io::Result;
 use tempfile::{NamedTempFile, TempDir, TempPath};
 
@@ -8,13 +9,13 @@ pub enum RmResult {
     NotRemoved,
 }
 
-pub fn run_test_rm<F>(rm_fn: F) -> Result<RmResult>
+pub fn run_test_rm<P, F>(cargo_tmp_dir: P, rm_fn: F) -> Result<RmResult>
 where
+    P: AsRef<Path>,
     F: FnOnce(&TempPath, &TempDir) -> Result<bool>,
 {
-    let cargo_tmp_dir_path = env!("CARGO_TARGET_TMPDIR");
-    let tmp_dir_path = TempDir::new_in(cargo_tmp_dir_path)?;
-    let rm_file_path = NamedTempFile::new_in(cargo_tmp_dir_path)?.into_temp_path();
+    let tmp_dir_path = TempDir::new_in(&cargo_tmp_dir)?;
+    let rm_file_path = NamedTempFile::new_in(&cargo_tmp_dir)?.into_temp_path();
 
     assert!(
         File::open(&rm_file_path).is_ok(),

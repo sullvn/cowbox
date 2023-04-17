@@ -24,10 +24,17 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 name = "cowbox_injection"
 version = "0.1.0"
 dependencies = [
+ "cowbox_testing",
  "detours_sys",
  "libc",
- "tempfile",
  "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "cowbox_testing"
+version = "0.1.0"
+dependencies = [
+ "tempfile",
 ]
 
 [[package]]
