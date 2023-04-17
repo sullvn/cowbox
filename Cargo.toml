@@ -5,6 +5,10 @@ members = [
   "detours_sys",
 ]
 
+[package.metadata.vcpkg]
+git = "https://github.com/microsoft/vcpkg"
+rev = "2023.02.24"
+
 [profile.release]
 lto = "fat"
 strip = "symbols"

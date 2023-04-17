@@ -14,10 +14,6 @@ features = [
 [build-dependencies]
 vcpkg = "0.2.15"
 
-[package.metadata.vcpkg]
-git = "https://github.com/microsoft/vcpkg"
-rev = "2023.02.24"
-
 [package.metadata.vcpkg.target]
 i686-pc-windows-msvc = { triplet = "x86-windows-static-md", dependencies = ["detours"] }
 x86_64-pc-windows-msvc = { triplet = "x64-windows-static-md", dependencies = ["detours"] }
