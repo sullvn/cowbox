@@ -21,21 +21,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "cowbox"
-version = "0.1.0"
-dependencies = [
- "cowbox_injection",
- "detours_sys",
-]
-
-[[package]]
 name = "cowbox_injection"
 version = "0.1.0"
 dependencies = [
  "detours_sys",
  "libc",
  "tempfile",
- "vcpkg",
  "windows-sys 0.48.0",
 ]
 
@@ -43,6 +34,7 @@ dependencies = [
 name = "detours_sys"
 version = "0.1.0"
 dependencies = [
+ "vcpkg",
  "windows-sys 0.48.0",
 ]
 
