@@ -38,8 +38,8 @@ fn injection_binary() -> &'static [u8] {
 }
 
 fn injection_lib_exists<P: AsRef<Path>>(lib_dir: P) -> Option<bool> {
-    let lib_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_LIB_FILE_NAME].iter().collect();
-    let hash_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_HASH_FILE_NAME].iter().collect();
+    let lib_path: PathBuf = [lib_dir.as_ref(), INJECTION_DIR_NAME.as_ref(), INJECTION_LIB_FILE_NAME.as_ref()].iter().collect();
+    let hash_path: PathBuf = [lib_dir.as_ref(), INJECTION_DIR_NAME.as_ref(), INJECTION_HASH_FILE_NAME.as_ref()].iter().collect();
 
     lib_path.try_exists().ok()?;
 
@@ -52,11 +52,11 @@ fn injection_lib_exists<P: AsRef<Path>>(lib_dir: P) -> Option<bool> {
 fn injection_lib_create<P: AsRef<Path>>(lib_dir: P) -> Result<()> {
     let hash_str = format!("{:x}", INJECTION_HASH);
 
-    let lib_dir: PathBuf = [lib_dir, INJECTION_DIR_NAME].iter().collect();
-    let lib_path: PathBuf = [lib_dir, INJECTION_LIB_FILE_NAME].iter().collect();
-    let hash_path: PathBuf = [lib_dir, INJECTION_HASH_FILE_NAME].iter().collect();
+    let injection_dir: PathBuf = [lib_dir.as_ref(), INJECTION_DIR_NAME.as_ref()].iter().collect();
+    let lib_path: PathBuf = [injection_dir.as_path(), INJECTION_LIB_FILE_NAME.as_ref()].iter().collect();
+    let hash_path: PathBuf = [injection_dir.as_path(), INJECTION_HASH_FILE_NAME.as_ref()].iter().collect();
 
-    create_dir_all(lib_dir)?;
+    create_dir_all(injection_dir)?;
     fs::write(lib_path, injection_binary())?;
     fs::write(hash_path, hash_str.as_bytes())?;
 
@@ -64,7 +64,7 @@ fn injection_lib_create<P: AsRef<Path>>(lib_dir: P) -> Result<()> {
 }
 
 fn injection_lib_update<P: AsRef<Path>>(lib_dir: P) -> Result<()> {
-    if let Some(true) = injection_lib_exists(lib_dir) {
+    if let Some(true) = injection_lib_exists(&lib_dir) {
         return Ok(());
     }
 
@@ -79,12 +79,14 @@ where
     T: AsRef<OsStr>,
     A: IntoIterator<Item = T>,
 {
-    let lib_path: PathBuf = [lib_dir, INJECTION_DIR_NAME, INJECTION_LIB_FILE_NAME].iter().collect();
+    let lib_path: PathBuf = [lib_dir.as_ref(), INJECTION_DIR_NAME.as_ref(), INJECTION_LIB_FILE_NAME.as_ref()].iter().collect();
     let exit_code = Command::new(program)
         .args(args)
         .env(DYLIB_ENV_KEY, lib_path)
         .status()?
-        .code();
+        .code()
+        .ok_or(std::io::Error::new(std::io::ErrorKind::Other, "Process quit early"))?;
+
     Ok(exit_code)
 }
 
@@ -135,6 +137,6 @@ where
     T: AsRef<OsStr>,
     A: IntoIterator<Item = T>,
 {
-    injection_lib_update(lib_dir)?;
-    spawn_injected_process(lib_dir, program, args)?;
+    injection_lib_update(&lib_dir)?;
+    spawn_injected_process(lib_dir, program, args)
 }

@@ -8,3 +8,6 @@ cowbox_injection = { path = "../cowbox_injection" }
 
 [target.'cfg(windows)'.dependencies]
 detours_sys = { path = "../detours_sys" }
+
+[dev-dependencies]
+cowbox_testing = { path = "../cowbox_testing" }
