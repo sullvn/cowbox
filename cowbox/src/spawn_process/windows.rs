@@ -42,4 +42,3 @@ where
         CloseHandle(pi.hThread);
     }
 }
-

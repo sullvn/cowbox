@@ -1,6 +1,7 @@
-use super::injection_binary::InjectionBinary;
 use std::io::Result;
 use std::path::Path;
+
+use super::injection_binary::InjectionBinary;
 
 pub struct InjectionBinaries {
     injection_binaries: &'static [InjectionBinary],
