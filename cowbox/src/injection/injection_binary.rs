@@ -26,6 +26,10 @@ impl InjectionBinary {
         self.create(&dir)
     }
 
+    pub fn binary_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
+        [dir.as_ref(), self.file_name.as_ref()].iter().collect()
+    }
+
     fn exists<P: AsRef<Path>>(&self, dir: P) -> Option<bool> {
         self.binary_path(&dir).try_exists().ok()?;
 
@@ -43,10 +47,6 @@ impl InjectionBinary {
         fs::write(self.hash_path(&dir), hash_str.as_bytes())?;
 
         Ok(())
-    }
-
-    fn binary_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
-        [dir.as_ref(), self.file_name.as_ref()].iter().collect()
     }
 
     fn hash_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
