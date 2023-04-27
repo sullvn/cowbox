@@ -1,3 +1,5 @@
+mod injection;
+
 use std::ffi::OsStr;
 use std::fs::{self, create_dir_all, read_to_string};
 use std::io::Result;
