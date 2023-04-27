@@ -1,8 +1,11 @@
 mod injection_binary;
 mod injection_binaries;
+mod constants;
 
 use injection_binaries::InjectionBinaries;
 use injection_binary::InjectionBinary;
+
+pub use constants::INJECTION_ENV_KEY;
 
 #[cfg(target_os = "linux")]
 pub const INJECTION_BINARIES: InjectionBinaries = InjectionBinaries::new(&[
