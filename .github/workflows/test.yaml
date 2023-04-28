@@ -28,8 +28,6 @@ jobs:
           cargo install cargo-vcpkg
           cargo vcpkg build --target i686-pc-windows-msvc
           cargo vcpkg build --target x86_64-pc-windows-msvc
-      - name: Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Build
         run: cargo build --release
       - name: Build (Windows x86)
@@ -42,8 +40,8 @@ jobs:
           cp `
             target\release\cowbox_injection.dll `
             target\release\cowbox_injection64.dll
-      - name: Typecheck
-        run: cargo check --all-targets --all-features
+      - name: Typecheck and Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Run tests
         run: cargo test
       - name: Run tests (Windows x86)
