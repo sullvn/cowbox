@@ -15,12 +15,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
+
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
+
       - name: Install vcpkg dependencies
         if: runner.os == 'Windows'
         run: |
@@ -28,22 +31,32 @@ jobs:
           cargo install cargo-vcpkg
           cargo vcpkg build --target i686-pc-windows-msvc
           cargo vcpkg build --target x86_64-pc-windows-msvc
-      - name: Build
-        run: cargo build --release
-      - name: Build (Windows x86)
+
+      - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
         run: |
-          cargo build --release --target i686-pc-windows-msvc
+          cargo build `
+            --package cowbox_injection `
+            --release `
+            --target i686-pc-windows-msvc `
+            --target x86_64-pc-windows-msvc
+
           cp `
             target\i686-pc-windows-msvc\release\cowbox_injection.dll `
             target\release\cowbox_injection32.dll
           cp `
-            target\release\cowbox_injection.dll `
+            target\x86_64-pc-windows-msvc\release\cowbox_injection.dll `
             target\release\cowbox_injection64.dll
+
+      - name: Build
+        run: cargo build --release
+
       - name: Typecheck and Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
+
       - name: Run tests
         run: cargo test
+
       - name: Run tests (Windows x86)
         if: runner.os == 'Windows'
         run: cargo test --target i686-pc-windows-msvc
