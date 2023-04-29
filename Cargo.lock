@@ -28,6 +28,7 @@ dependencies = [
  "cowbox_testing",
  "detours_sys",
  "which",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
