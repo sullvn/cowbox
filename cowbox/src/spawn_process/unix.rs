@@ -5,7 +5,8 @@ use std::io::Result;
 use std::path::Path;
 use std::process::Command;
 
-use crate::injection::{INJECTION_BINARIES, INJECTION_ENV_KEY};
+use crate::injection::INJECTION_BINARIES;
+use crate::injection::constants::INJECTION_ENV_KEY;
 
 pub fn spawn_process<P, S, T, A>(injection_dir: P, program: S, args: A) -> Result<i32>
 where
