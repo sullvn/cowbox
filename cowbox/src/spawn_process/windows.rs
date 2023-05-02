@@ -13,6 +13,8 @@ use windows_sys::Win32::System::Threading::{
 };
 
 use crate::INJECTION_BINARIES;
+use crate::as_str::AsStr;
+use super::status_bool::StatusBool;
 
 /// Exit code as returned by
 /// [`GetExitCodeProcess`][0]
@@ -20,63 +22,6 @@ use crate::INJECTION_BINARIES;
 /// [0]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess
 ///
 type ExitCode = u32;
-
-/// Trait for types which can be coerced,
-/// maybe, into a string slice.
-///
-/// Essentially a specific implementation
-/// of [`std::convert::TryFrom`]. A new
-/// trait is required due to orphaning
-/// rules.
-///
-/// TODO: Replace with `TryFrom` on
-/// custom wrapper types.
-///
-trait AsStr {
-    fn as_str(&self, description: &str) -> Result<&str>;
-}
-
-impl<T: AsRef<OsStr>> AsStr for T {
-    fn as_str(&self, description: &str) -> Result<&str> {
-        self.as_ref().to_str().ok_or_else(|| {
-            Error::new(
-                ErrorKind::InvalidData,
-                format!("{description} is invalid UTF-8"),
-            )
-        })
-    }
-}
-
-/// Convert Win32 API status return
-/// values into informative `Result`
-trait StatusBool {
-    fn ok(&self) -> Result<()>;
-}
-
-impl StatusBool for i32 {
-    fn ok(&self) -> Result<()> {
-        // Checking for `FALSE` is stronger
-        // than checking for `TRUE`. Technically
-        // any non-zero value should be treated
-        // as `true`.
-        if *self == FALSE {
-            return Err(Error::last_os_error());
-        }
-
-        Ok(())
-    }
-}
-
-impl StatusBool for WIN32_ERROR {
-    fn ok(&self) -> Result<()> {
-        if *self == WAIT_FAILED {
-            return Err(Error::last_os_error());
-        }
-
-        Ok(())
-    }
-}
-
 
 /// Spawn process with injection on Windows
 ///

@@ -1,3 +1,4 @@
+mod status_bool;
 mod unix;
 mod windows;
 
