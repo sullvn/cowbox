@@ -5,8 +5,8 @@ use std::io::Result;
 use std::path::Path;
 use std::process::Command;
 
-use crate::injection::INJECTION_BINARIES;
 use crate::injection::constants::INJECTION_ENV_KEY;
+use crate::injection::INJECTION_BINARIES;
 
 pub fn spawn_process<P, S, T, A>(injection_dir: P, program: S, args: A) -> Result<i32>
 where
@@ -21,7 +21,10 @@ where
         .env(INJECTION_ENV_KEY, injection_binary_path)
         .status()?
         .code()
-        .ok_or(std::io::Error::new(std::io::ErrorKind::Other, "Process quit early"))?;
+        .ok_or(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "Process quit early",
+        ))?;
 
     Ok(exit_code)
 }
