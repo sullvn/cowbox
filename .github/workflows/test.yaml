@@ -22,10 +22,13 @@ jobs:
           components: clippy
 
       - name: Cache Rust
+        id: cache-rust
         uses: Swatinem/rust-cache@v2
 
       - name: Install vcpkg dependencies
-        if: runner.os == 'Windows'
+        if: |
+          (runner.os == 'Windows') &&
+          (steps.cache-rust.outputs.cache-hit != 'true')
         run: |
           cd detours_sys
           cargo install cargo-vcpkg
