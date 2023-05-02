@@ -59,6 +59,18 @@ impl StatusBool for WIN32_ERROR {
     }
 }
 
+
+/// Spawn process with injection on Windows
+///
+/// Windows requires(?) the [Detours][0]
+/// library to inject code into a process.
+///
+/// This is contrast to macOS and Linux,
+/// where a built-in environment variable
+/// does the trick.
+///
+/// [0]: https://github.com/microsoft/Detours
+///
 pub fn spawn_process<P, S, T, A>(injection_dir: P, program: S, args: A) -> Result<i32>
 where
     P: AsRef<Path>,

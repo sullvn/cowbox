@@ -10,6 +10,11 @@ use injection::INJECTION_BINARIES;
 use prepare_program::prepare_program;
 use spawn_process::spawn_process;
 
+/// Spawn process with sandboxed filesystem access
+///
+/// Provide the path of `injection_dir` which
+/// `spawn` can use to setup helper files.
+///
 pub fn spawn<P, S, T, A>(injection_dir: P, program: S, args: A) -> Result<i32>
 where
     P: AsRef<Path>,
