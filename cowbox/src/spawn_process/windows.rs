@@ -7,7 +7,7 @@ use std::io::{Error, ErrorKind, Result};
 use std::mem::zeroed;
 use std::path::Path;
 use std::ptr;
-use windows_sys::Win32::Foundation::{CloseHandle, FALSE, WAIT_FAILED, WIN32_ERROR};
+use windows_sys::Win32::Foundation::{CloseHandle, FALSE};
 use windows_sys::Win32::System::Threading::{
     GetExitCodeProcess, WaitForSingleObject, INFINITE, PROCESS_INFORMATION, STARTUPINFOA,
 };
