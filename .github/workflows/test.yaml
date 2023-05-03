@@ -29,11 +29,25 @@ jobs:
         if: |
           (runner.os == 'Windows') &&
           (steps.cache-rust.outputs.cache-hit != 'true')
+        # if: runner.os == 'Windows'
         run: |
           cd detours_sys
           cargo install cargo-vcpkg
           cargo vcpkg build --target i686-pc-windows-msvc
           cargo vcpkg build --target x86_64-pc-windows-msvc
+
+      - name: ls ~/.cargo
+        run: ls ~/.cargo/registry/src/*/*
+
+      - name: ls $CARGO_HOME
+        shell: bash
+        run: ls $CARGO_HOME/registry/src/*/*
+
+      - name: List target
+        run: ls target
+
+      - name: List vcpkg
+        run: ls target/vcpkg
 
       - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
