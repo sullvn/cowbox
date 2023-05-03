@@ -12,9 +12,9 @@ use windows_sys::Win32::System::Threading::{
     GetExitCodeProcess, WaitForSingleObject, INFINITE, PROCESS_INFORMATION, STARTUPINFOA,
 };
 
-use crate::INJECTION_BINARIES;
-use crate::as_str::AsStr;
 use super::status_bool::StatusBool;
+use crate::as_str::AsStr;
+use crate::INJECTION_BINARIES;
 
 /// Exit code as returned by
 /// [`GetExitCodeProcess`][0]

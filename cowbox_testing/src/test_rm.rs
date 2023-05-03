@@ -1,6 +1,6 @@
 use std::fs::File;
-use std::path::Path;
 use std::io::Result;
+use std::path::Path;
 use tempfile::{NamedTempFile, TempDir, TempPath};
 
 #[derive(Debug, PartialEq, Eq)]

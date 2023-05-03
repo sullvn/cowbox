@@ -6,26 +6,24 @@ use injection_binaries::InjectionBinaries;
 use injection_binary::InjectionBinary;
 
 #[cfg(target_os = "linux")]
-pub const INJECTION_BINARIES: InjectionBinaries =
-    InjectionBinaries::new(&[InjectionBinary::new(
-        "libcowbox_injection.so",
-        include_bytes!(concat!(
-            "../../target/",
-            env!("PROFILE"),
-            "/libcowbox_injection.so",
-        )),
-    )]);
+pub const INJECTION_BINARIES: InjectionBinaries = InjectionBinaries::new(&[InjectionBinary::new(
+    "libcowbox_injection.so",
+    include_bytes!(concat!(
+        "../../target/",
+        env!("PROFILE"),
+        "/libcowbox_injection.so",
+    )),
+)]);
 
 #[cfg(target_os = "macos")]
-pub const INJECTION_BINARIES: InjectionBinaries =
-    InjectionBinaries::new(&[InjectionBinary::new(
-        "libcowbox_injection.dylib",
-        include_bytes!(concat!(
-            "../../target/",
-            env!("PROFILE"),
-            "/libcowbox_injection.dylib",
-        )),
-    )]);
+pub const INJECTION_BINARIES: InjectionBinaries = InjectionBinaries::new(&[InjectionBinary::new(
+    "libcowbox_injection.dylib",
+    include_bytes!(concat!(
+        "../../target/",
+        env!("PROFILE"),
+        "/libcowbox_injection.dylib",
+    )),
+)]);
 
 #[cfg(all(target_os = "windows", target_arch = "x86"))]
 pub const INJECTION_BINARIES: InjectionBinaries = InjectionBinaries::new(&[

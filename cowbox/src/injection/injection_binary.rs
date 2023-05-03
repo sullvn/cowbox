@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 /// linked library, is loaded into the
 /// target program on creation. Standard
 /// OS calls in the program are detoured
-/// through cowbox's middleware. 
+/// through cowbox's middleware.
 ///
 pub struct InjectionBinary {
     ///
@@ -100,7 +100,7 @@ impl InjectionBinary {
     /// as its file name. A symlink, with the
     /// standard "nice" dylib name, could
     /// link to the hash. Updating the symlink
-    /// location is an atomic operation. 
+    /// location is an atomic operation.
     ///
     /// Problem: For some reason, symlinks
     /// [require administrator privileges on
