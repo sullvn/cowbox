@@ -38,17 +38,7 @@ jobs:
 
       - name: ls ~/.cargo
         if: runner.os == 'Windows'
-        run: ls ~/.cargo/
-
-      - name: echo $CARGO_HOME
-        if: runner.os == 'Windows'
-        shell: bash
-        run: echo $CARGO_HOME
-
-      - name: ls $CARGO_HOME
-        if: runner.os == 'Windows'
-        shell: bash
-        run: ls $CARGO_HOME/registry/
+        run: ls ~/.cargo/registry/src/
 
       - name: List target
         if: runner.os == 'Windows'
@@ -57,6 +47,10 @@ jobs:
       - name: List vcpkg
         if: runner.os == 'Windows'
         run: ls target/vcpkg
+
+      - name: ls ~/.cargo
+        if: runner.os == 'Windows'
+        run: ls ~/.cargo/registry/src/*/*
 
       - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
