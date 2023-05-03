@@ -38,7 +38,7 @@ jobs:
 
       - name: ls ~/.cargo
         if: runner.os == 'Windows'
-        run: ls ~/.cargo/registry/src/
+        run: ls ~/.cargo/
 
       - name: List target
         if: runner.os == 'Windows'
@@ -47,10 +47,6 @@ jobs:
       - name: List vcpkg
         if: runner.os == 'Windows'
         run: ls target/vcpkg
-
-      - name: ls ~/.cargo
-        if: runner.os == 'Windows'
-        run: ls ~/.cargo/registry/src/*/*
 
       - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
