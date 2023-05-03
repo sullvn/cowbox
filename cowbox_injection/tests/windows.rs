@@ -76,6 +76,8 @@ fn missing_dylib_rm() -> Result<()> {
 }
 
 fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch) -> Result<()> {
+    // TODO: Use standard paths and rename
+    // with 32/64 suffix in this test
     let dll_path = match dll_arch {
         Arch::X86 => concat!("..\\target\\", env!("PROFILE"), "\\cowbox_injection32.dll"),
         Arch::X86_64 => concat!("..\\target\\", env!("PROFILE"), "\\cowbox_injection64.dll"),
