@@ -10,6 +10,6 @@ in
       llvmPackages.lldb
       rust-analyzer
       rustc
-      rustfmt
+      # rustfmt
     ];
   }
