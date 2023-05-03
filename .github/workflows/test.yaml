@@ -22,31 +22,27 @@ jobs:
           components: clippy
 
       - name: Cache Rust
-        id: cache-rust
         uses: Swatinem/rust-cache@v2
 
+      - name: Cache vcpkg
+        if: runner.os == 'Windows'
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/vcpkg
+          key: ${{ runner.os }}-${{ hashFiles('**/Cargo.toml') }}
+
       - name: Install vcpkg dependencies
-        if: |
-          (runner.os == 'Windows') &&
-          (steps.cache-rust.outputs.cache-hit != 'true')
-        # if: runner.os == 'Windows'
+        if: runner.os == 'Windows'
+        # if: |
+        #   (runner.os == 'Windows') &&
+        #   (steps.cache-rust.outputs.cache-hit != 'true')
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
         run: |
           cd detours_sys
           cargo install cargo-vcpkg
           cargo vcpkg build --target i686-pc-windows-msvc
           cargo vcpkg build --target x86_64-pc-windows-msvc
-
-      - name: ls ~/.cargo
-        if: runner.os == 'Windows'
-        run: ls ~/.cargo/
-
-      - name: List target
-        if: runner.os == 'Windows'
-        run: ls target
-
-      - name: List vcpkg
-        if: runner.os == 'Windows'
-        run: ls target/vcpkg
 
       - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
