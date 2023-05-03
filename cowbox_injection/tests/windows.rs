@@ -3,8 +3,10 @@
 use cowbox_testing::{run_test_rm, Arch, RmResult, TempDir, TempPath};
 use detours_sys::DetourCreateProcessWithDllExA;
 use std::ffi::CString;
+use std::fs;
 use std::io::Result;
 use std::mem::zeroed;
+use std::path::Path;
 use std::ptr;
 use windows_sys::Win32::Foundation::{
     CloseHandle, BOOL, FALSE, STATUS_DLL_NOT_FOUND, STATUS_INVALID_IMAGE_FORMAT, TRUE,
@@ -18,7 +20,7 @@ type ExitCode = u32;
 
 #[test]
 fn normal_rm() -> Result<()> {
-    let (rm_result, exit_code) = run_windows_test_rm(|si, pi, file_path, _| {
+    let (rm_result, exit_code) = run_windows_test_rm(|si, pi, file_path: &TempPath, _| {
         let rm_cmd = CString::new(format!(
             "powershell -Command \"Remove-Item {}\"",
             file_path.to_str().unwrap()
@@ -48,10 +50,20 @@ fn normal_rm() -> Result<()> {
 
 #[test]
 fn sandboxed_rm() -> Result<()> {
+    let dll_dir = TempDir::new_in(env!("CARGO_TARGET_TMPDIR"))?;
+    fs::copy(
+        concat!("..\\target\\i686-pc-windows-msvc\\", env!("PROFILE"), "\\cowbox_injection.dll"),
+        dll_dir.path().join("cowbox_injection32.dll"),
+    )?;
+    fs::copy(
+        concat!("..\\target\\x86_64-pc-windows-msvc\\", env!("PROFILE"), "\\cowbox_injection.dll"),
+        dll_dir.path().join("cowbox_injection64.dll"),
+    )?;
+
     let test_arch = Arch::from_target();
     for dll_arch in Arch::options() {
         for rm_arch in Arch::options() {
-            sandboxed_rm_configuration(&test_arch, &dll_arch, &rm_arch)?;
+            sandboxed_rm_configuration(dll_dir.path(), &test_arch, &dll_arch, &rm_arch)?;
         }
     }
 
@@ -60,7 +72,7 @@ fn sandboxed_rm() -> Result<()> {
 
 #[test]
 fn missing_dylib_rm() -> Result<()> {
-    let (rm_result, exit_code) = run_windows_detour_rm(".\\missing.dll", "powershell")?;
+    let (rm_result, exit_code) = run_windows_detour_rm(Path::new(".\\missing.dll"), "powershell")?;
 
     assert_eq!(
         rm_result,
@@ -75,12 +87,10 @@ fn missing_dylib_rm() -> Result<()> {
     Ok(())
 }
 
-fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch) -> Result<()> {
-    // TODO: Use standard paths and rename
-    // with 32/64 suffix in this test
+fn sandboxed_rm_configuration(dll_dir: &Path, test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch) -> Result<()> {
     let dll_path = match dll_arch {
-        Arch::X86 => concat!("..\\target\\", env!("PROFILE"), "\\cowbox_injection32.dll"),
-        Arch::X86_64 => concat!("..\\target\\", env!("PROFILE"), "\\cowbox_injection64.dll"),
+        Arch::X86 => dll_dir.join("cowbox_injection32.dll"),
+        Arch::X86_64 => dll_dir.join("cowbox_injection64.dll"),
     };
 
     let rm_program = match rm_arch {
@@ -88,7 +98,7 @@ fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch)
         Arch::X86_64 => "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
     };
 
-    let (rm_result, exit_code) = run_windows_detour_rm(dll_path, rm_program)?;
+    let (rm_result, exit_code) = run_windows_detour_rm(&dll_path, rm_program)?;
 
     let expected_exit_code: u32 = match (&test_arch, &dll_arch, &rm_arch) {
         (ta, da, _) if ta == da => 0,
@@ -106,7 +116,7 @@ fn sandboxed_rm_configuration(test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch)
     Ok(())
 }
 
-fn run_windows_detour_rm(dll_path: &str, rm_program: &str) -> Result<(RmResult, ExitCode)> {
+fn run_windows_detour_rm(dll_path: &Path, rm_program: &str) -> Result<(RmResult, ExitCode)> {
     run_windows_test_rm(|si, pi, file_path: &TempPath, _| {
         let rm_cmd = CString::new(format!(
             "{} -Command \"Remove-Item {}\"",
@@ -127,7 +137,7 @@ fn run_windows_detour_rm(dll_path: &str, rm_program: &str) -> Result<(RmResult, 
                 ptr::null(),
                 si,
                 pi,
-                CString::new(dll_path)
+                CString::new(dll_path.to_str().unwrap())
                     .unwrap()
                     .into_bytes_with_nul()
                     .as_ptr(),

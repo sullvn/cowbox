@@ -53,14 +53,6 @@ jobs:
             --target i686-pc-windows-msvc `
             --target x86_64-pc-windows-msvc
 
-          # TODO: Do rename in test
-          cp `
-            target\i686-pc-windows-msvc\debug\cowbox_injection.dll `
-            target\debug\cowbox_injection32.dll
-          cp `
-            target\x86_64-pc-windows-msvc\debug\cowbox_injection.dll `
-            target\debug\cowbox_injection64.dll
-
       - name: Build
         run: cargo build --profile dev
 
