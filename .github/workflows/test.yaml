@@ -24,8 +24,20 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
 
-      - name: Install vcpkg dependencies
+      - name: Cache vcpkg
+        uses: actions/cache@v3
         if: runner.os == 'Windows'
+        id: cache-vcpkg
+        with:
+          path: ${{ github.workspace }}\vcpkg
+          key: ${{ runner.os }}-${{ hashFiles('**/Cargo.toml') }}
+
+      - name: Install vcpkg dependencies
+        if: |
+          (runner.os == 'Windows') &&
+          (steps.cache-vcpkg.outputs.cache-hit != 'true')
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}\vcpkg
         run: |
           cd detours_sys
           cargo install cargo-vcpkg
@@ -37,19 +49,12 @@ jobs:
         run: |
           cargo build `
             --package cowbox_injection `
-            --release `
+            --profile dev `
             --target i686-pc-windows-msvc `
             --target x86_64-pc-windows-msvc
 
-          cp `
-            target\i686-pc-windows-msvc\release\cowbox_injection.dll `
-            target\release\cowbox_injection32.dll
-          cp `
-            target\x86_64-pc-windows-msvc\release\cowbox_injection.dll `
-            target\release\cowbox_injection64.dll
-
       - name: Build
-        run: cargo build --release
+        run: cargo build --profile dev
 
       - name: Typecheck and Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
