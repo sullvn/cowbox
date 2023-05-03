@@ -45,6 +45,8 @@ impl InjectionBinaries {
     /// architecture as the `cowbox` program.
     ///
     pub fn preferred(&self) -> &'static InjectionBinary {
-        self.injection_binaries.get(0).expect("at least one injection binary should be defined")
+        self.injection_binaries
+            .get(0)
+            .expect("at least one injection binary should be defined")
     }
 }

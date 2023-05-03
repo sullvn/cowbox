@@ -4,8 +4,7 @@ use std::io::Result;
 use std::path::Path;
 
 #[cfg(not(target_os = "macos"))]
-pub fn prepare_program<'a>(_injection_dir: &Path, program: &'a OsStr) -> Result<Cow<'a, OsStr>>
-{
+pub fn prepare_program<'a>(_injection_dir: &Path, program: &'a OsStr) -> Result<Cow<'a, OsStr>> {
     Ok(Cow::Borrowed(program))
 }
 
@@ -47,11 +46,8 @@ mod macos {
     /// [0]: https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/Introduction/Introduction.html
     /// [1]: https://metalbear.co/blog/fun-with-macoss-sip/
     ///
-    pub fn prepare_program<'a>(injection_dir: &Path, program: &'a OsStr) -> Result<Cow<'a, OsStr>>
-    {
-        let program_path = which(program).map_err(|e| {
-            Error::new(ErrorKind::Other, e)
-        })?;
+    pub fn prepare_program<'a>(injection_dir: &Path, program: &'a OsStr) -> Result<Cow<'a, OsStr>> {
+        let program_path = which(program).map_err(|e| Error::new(ErrorKind::Other, e))?;
 
         // TODO: Detect SIP on program here and
         // return, doing nothing, if there are
@@ -67,4 +63,3 @@ mod macos {
         Ok(Cow::Owned(copy_path.into_os_string()))
     }
 }
-

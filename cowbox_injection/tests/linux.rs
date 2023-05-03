@@ -24,11 +24,10 @@ fn sandboxed_rm() -> Result<()> {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
-            .env("LD_PRELOAD", concat!(
-                "../target/",
-                env!("PROFILE"),
-                "/libcowbox_injection.so"
-            ))
+            .env(
+                "LD_PRELOAD",
+                concat!("../target/", env!("PROFILE"), "/libcowbox_injection.so"),
+            )
             .status()?
             .success())
     })?;
@@ -43,11 +42,10 @@ fn missing_dylib_rm() -> Result<()> {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
-            .env("LD_PRELOAD", concat!(
-                "../target/",
-                env!("PROFILE"),
-                "/missing.so"
-            ))
+            .env(
+                "LD_PRELOAD",
+                concat!("../target/", env!("PROFILE"), "/missing.so"),
+            )
             .status()?
             .success())
     })?;

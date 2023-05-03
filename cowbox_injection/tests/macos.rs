@@ -26,11 +26,10 @@ fn sandboxed_sip_rm() -> Result<()> {
         Ok(Command::new("rm")
             .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", concat!(
-                "../target/",
-                env!("PROFILE"),
-                "/libcowbox_injection.dylib"
-            ))
+            .env(
+                "DYLD_INSERT_LIBRARIES",
+                concat!("../target/", env!("PROFILE"), "/libcowbox_injection.dylib"),
+            )
             .status()?
             .success())
     })?;
@@ -48,11 +47,10 @@ fn sandboxed_rm() -> Result<()> {
         Ok(Command::new(rm_copy_path)
             .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", concat!(
-                "../target/",
-                env!("PROFILE"),
-                "/libcowbox_injection.dylib"
-            ))
+            .env(
+                "DYLD_INSERT_LIBRARIES",
+                concat!("../target/", env!("PROFILE"), "/libcowbox_injection.dylib"),
+            )
             .status()?
             .success())
     })?;
@@ -71,11 +69,10 @@ fn missing_dylib_rm() -> Result<()> {
         exit_code = Command::new(rm_copy_path)
             .arg(file_path)
             .env_clear()
-            .env("DYLD_INSERT_LIBRARIES", concat!(
-                "../target/",
-                env!("PROFILE"),
-                "/missing.dylib"
-            ))
+            .env(
+                "DYLD_INSERT_LIBRARIES",
+                concat!("../target/", env!("PROFILE"), "/missing.dylib"),
+            )
             .status()?
             .code();
         Ok(true)

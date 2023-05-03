@@ -52,11 +52,19 @@ fn normal_rm() -> Result<()> {
 fn sandboxed_rm() -> Result<()> {
     let dll_dir = TempDir::new_in(env!("CARGO_TARGET_TMPDIR"))?;
     fs::copy(
-        concat!("..\\target\\i686-pc-windows-msvc\\", env!("PROFILE"), "\\cowbox_injection.dll"),
+        concat!(
+            "..\\target\\i686-pc-windows-msvc\\",
+            env!("PROFILE"),
+            "\\cowbox_injection.dll"
+        ),
         dll_dir.path().join("cowbox_injection32.dll"),
     )?;
     fs::copy(
-        concat!("..\\target\\x86_64-pc-windows-msvc\\", env!("PROFILE"), "\\cowbox_injection.dll"),
+        concat!(
+            "..\\target\\x86_64-pc-windows-msvc\\",
+            env!("PROFILE"),
+            "\\cowbox_injection.dll"
+        ),
         dll_dir.path().join("cowbox_injection64.dll"),
     )?;
 
@@ -87,7 +95,12 @@ fn missing_dylib_rm() -> Result<()> {
     Ok(())
 }
 
-fn sandboxed_rm_configuration(dll_dir: &Path, test_arch: &Arch, dll_arch: &Arch, rm_arch: &Arch) -> Result<()> {
+fn sandboxed_rm_configuration(
+    dll_dir: &Path,
+    test_arch: &Arch,
+    dll_arch: &Arch,
+    rm_arch: &Arch,
+) -> Result<()> {
     let dll_path = match dll_arch {
         Arch::X86 => dll_dir.join("cowbox_injection32.dll"),
         Arch::X86_64 => dll_dir.join("cowbox_injection64.dll"),
