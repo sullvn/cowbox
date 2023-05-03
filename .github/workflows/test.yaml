@@ -37,17 +37,17 @@ jobs:
           cargo vcpkg build --target x86_64-pc-windows-msvc
 
       - name: ls ~/.cargo
-        run: ls ~/.cargo/registry/src/*/*
+        run: ls ~/.cargo/registry/src/*/*; true
 
       - name: ls $CARGO_HOME
         shell: bash
-        run: ls $CARGO_HOME/registry/src/*/*
+        run: ls $CARGO_HOME/registry/src/*/*; true
 
       - name: List target
-        run: ls target
+        run: ls target; true
 
       - name: List vcpkg
-        run: ls target/vcpkg
+        run: ls target/vcpkg; true
 
       - name: Pre-build Windows injection DLLs
         if: runner.os == 'Windows'
