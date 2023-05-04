@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 cowbox_injection = { path = "../cowbox_injection" }
-crc = "3.0.1"
 
 [dependencies.xxhash-rust]
 version = "0.8.6"
