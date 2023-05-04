@@ -13,4 +13,3 @@ strip = "symbols"
 
 [profile.dev.package.cowbox_injection]
 debug = false
-strip = "symbols"
