@@ -1,7 +1,8 @@
 use std::ffi::OsStr;
-use std::fs::{self, create_dir_all, read_to_string};
-use std::io::Result;
+use std::fs::{self, create_dir_all};
+use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
+use xxhash_rust::const_xxh3::xxh3_128;
 
 /// Injection binary definition
 ///
@@ -36,11 +37,12 @@ pub struct InjectionBinary {
 
 impl InjectionBinary {
     pub const fn new(file_name: &'static str, bytes: &'static [u8]) -> Self {
+        let hash = xxh3_128(bytes);
+
         Self {
             bytes,
             file_name,
-            // TODO: Actually compute hash
-            hash: 0,
+            hash,
         }
     }
 
@@ -55,7 +57,7 @@ impl InjectionBinary {
     /// many I/O calls as possible.
     ///
     pub fn update<P: AsRef<Path>>(&self, dir: P) -> Result<()> {
-        if let Some(true) = self.exists(&dir) {
+        if let Ok(true) = self.exists(&dir) {
             return Ok(());
         }
 
@@ -80,20 +82,32 @@ impl InjectionBinary {
     /// the first run and any subsequent
     /// updates of `cowbox`.
     ///
-    fn exists<P: AsRef<Path>>(&self, dir: P) -> Option<bool> {
-        self.binary_path(&dir).try_exists().ok()?;
+    fn exists<P: AsRef<Path>>(&self, dir: P) -> Result<bool> {
+        self.binary_path(&dir).try_exists()?;
 
-        let found_hash: u128 = read_to_string(self.hash_path(&dir)).ok()?.parse().ok()?;
+        let hash_bytes_slice = fs::read(self.hash_path(&dir))?;
+        let hash_bytes_array: [u8; 16] = hash_bytes_slice.try_into().map_err(|_| {
+            Error::new(
+                ErrorKind::InvalidData,
+                "File has injection binary hash of wrong length",
+            )
+        })?;
+
+        // Use native byte order as portability is
+        // not necessary. Injection binary and its
+        // hash should stay local to one system
+        // anyways.
+        let found_hash = u128::from_ne_bytes(hash_bytes_array);
         let hash_matches = found_hash == self.hash;
 
-        Some(hash_matches)
+        Ok(hash_matches)
     }
 
     /// Create injection binary and metadata
     /// (eg. hash) on the filesystem
     ///
     /// QUESTION: Is there a way to make this
-    /// update process atomic. Does it even
+    /// update process atomic? Does it even
     /// matter that much?
     ///
     /// Example: Binary could have the hash
@@ -109,11 +123,11 @@ impl InjectionBinary {
     /// [0]: https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links#default-values
     ///
     fn create<P: AsRef<Path>>(&self, dir: P) -> Result<()> {
-        let hash_str = format!("{:x}", self.hash);
-
         create_dir_all(&dir)?;
         fs::write(self.binary_path(&dir), self.bytes)?;
-        fs::write(self.hash_path(&dir), hash_str.as_bytes())?;
+
+        // See note above about byte order
+        fs::write(self.hash_path(&dir), self.hash.to_ne_bytes())?;
 
         Ok(())
     }
