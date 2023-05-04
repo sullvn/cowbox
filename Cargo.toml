@@ -11,5 +11,17 @@ members = [
 lto = "fat"
 strip = "symbols"
 
+# Minimize size of injection binaries
+# during development.
+#
+# Only important since [Rust
+# currently has an artificial, hard
+# limit][0] on how much compile time
+# computation can be done. We compute
+# the hashes of binaries at compile
+# time.
+#
+# [0]: https://github.com/rust-lang/rust/issues/93481
+#
 [profile.dev.package.cowbox_injection]
 debug = false
