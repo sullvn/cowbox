@@ -6,6 +6,12 @@ edition = "2021"
 [dependencies]
 cowbox_injection = { path = "../cowbox_injection" }
 
+[dependencies.xxhash-rust]
+version = "0.8.6"
+features = [
+  "const_xxh3"
+]
+
 [target.'cfg(target_os = "macos")'.dependencies]
 which = "4.4.0"
 

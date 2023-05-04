@@ -7,7 +7,8 @@ use std::ffi::OsStr;
 use std::io::Result;
 use std::path::Path;
 
-use injection::INJECTION_BINARIES;
+// TODO: Only export `INJECTION_BINARIES` for tests
+pub use injection::INJECTION_BINARIES;
 use prepare_program::prepare_program;
 use spawn_process::spawn_process;
 

@@ -53,12 +53,11 @@ jobs:
         run: |
           cargo build `
             --package cowbox_injection `
-            --profile dev `
             --target i686-pc-windows-msvc `
             --target x86_64-pc-windows-msvc
 
       - name: Build
-        run: cargo build --profile dev
+        run: cargo build
 
       - name: Typecheck and Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
