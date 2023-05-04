@@ -91,15 +91,7 @@ impl InjectionBinary {
         bp
     }
 
-    /// Check if everything exists correctly
-    /// on the file system.
-    ///
-    /// The expectation is that this will be
-    /// true 99% of the time, besides on
-    /// the first run and any subsequent
-    /// updates of `cowbox`.
-    ///
-    fn exists<P: AsRef<Path>>(&self, dir: P) -> Result<bool> {
+    pub fn read_hash<P: AsRef<Path>>(&self, dir: P) -> Result<u128> {
         self.binary_path(&dir).try_exists()?;
 
         let hash_bytes_slice = fs::read(self.hash_path(&dir))?;
@@ -115,7 +107,19 @@ impl InjectionBinary {
         // hash should stay local to one system
         // anyways.
         let found_hash = u128::from_ne_bytes(hash_bytes_array);
-        let hash_matches = found_hash == self.hash;
+        Ok(found_hash)
+    }
+
+    /// Check if everything exists correctly
+    /// on the file system.
+    ///
+    /// The expectation is that this will be
+    /// true 99% of the time, besides on
+    /// the first run and any subsequent
+    /// updates of `cowbox`.
+    ///
+    fn exists<P: AsRef<Path>>(&self, dir: P) -> Result<bool> {
+        let hash_matches = self.read_hash(dir)? == self.hash;
 
         Ok(hash_matches)
     }

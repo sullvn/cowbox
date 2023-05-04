@@ -49,4 +49,9 @@ impl InjectionBinaries {
             .get(0)
             .expect("at least one injection binary should be defined")
     }
+
+    /// Iterate over defined injection binaries
+    pub fn iter(&self) -> impl Iterator<Item = &InjectionBinary> {
+        self.injection_binaries.iter()
+    }
 }
