@@ -53,19 +53,18 @@ jobs:
         run: |
           cargo build `
             --package cowbox_injection `
-            --profile release `
             --target i686-pc-windows-msvc `
             --target x86_64-pc-windows-msvc
 
       - name: Build
-        run: cargo build --profile release
+        run: cargo build
 
       - name: Typecheck and Clippy
-        run: cargo clippy --all-targets --all-features --profile release -- -D warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Run tests
-        run: cargo test --profile release
+        run: cargo test
 
       - name: Run tests (Windows x86)
         if: runner.os == 'Windows'
-        run: cargo test --target i686-pc-windows-msvc --profile release
+        run: cargo test --target i686-pc-windows-msvc
