@@ -24,4 +24,4 @@ strip = "symbols"
 # [0]: https://github.com/rust-lang/rust/issues/93481
 #
 [profile.dev.package.cowbox_injection]
-debug = false
+strip = "symbols"
