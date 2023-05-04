@@ -43,7 +43,7 @@ fn spawn_rm(file_path: &TempPath, tmp_dir: &TempDir) -> Result<i32> {
         "powershell",
         [
             "-Command",
-            &format!("Remove-Item {}", file_path.as_os_str().to_string),
+            &format!("Remove-Item {}", file_path.as_os_str().to_str().unwrap()),
         ],
     )
 }
