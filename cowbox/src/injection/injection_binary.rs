@@ -46,6 +46,10 @@ impl InjectionBinary {
         }
     }
 
+    pub fn hash(&self) -> u128 {
+        self.hash
+    }
+
     /// Update binary on filesystem
     ///
     /// Should be done on every instantiation
@@ -72,6 +76,19 @@ impl InjectionBinary {
     ///
     pub fn binary_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
         dir.as_ref().join(self.file_name)
+    }
+
+    /// Hash file path
+    ///
+    /// NOTE: See `create` documentation for
+    /// this could evolve.
+    ///
+    pub fn hash_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
+        let mut bp = self.binary_path(&dir);
+        let extension = bp.extension().unwrap_or(OsStr::new(""));
+
+        bp.set_extension([extension, OsStr::new("hash")].join(OsStr::new(".")));
+        bp
     }
 
     /// Check if everything exists correctly
@@ -130,18 +147,5 @@ impl InjectionBinary {
         fs::write(self.hash_path(&dir), self.hash.to_ne_bytes())?;
 
         Ok(())
-    }
-
-    /// Hash file path
-    ///
-    /// NOTE: See `create` documentation for
-    /// this could evolve.
-    ///
-    fn hash_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
-        let mut bp = self.binary_path(&dir);
-        let extension = bp.extension().unwrap_or(OsStr::new(""));
-
-        bp.set_extension([extension, OsStr::new("hash")].join(OsStr::new(".")));
-        bp
     }
 }
