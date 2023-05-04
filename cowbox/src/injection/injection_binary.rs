@@ -2,7 +2,7 @@ use std::ffi::OsStr;
 use std::fs::{self, create_dir_all};
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
-use xxhash_rust::const_xxh3::xxh3_128;
+use xxhash_rust::const_xxh3::xxh3_64;
 
 /// Injection binary definition
 ///
@@ -32,12 +32,12 @@ pub struct InjectionBinary {
     /// invalidation of any injection
     /// binary already deployed onto
     /// the file system
-    hash: u128,
+    hash: u64,
 }
 
 impl InjectionBinary {
     pub const fn new(file_name: &'static str, bytes: &'static [u8]) -> Self {
-        let hash = xxh3_128(bytes);
+        let hash = xxh3_64(bytes);
 
         Self {
             bytes,
@@ -46,7 +46,7 @@ impl InjectionBinary {
         }
     }
 
-    pub fn hash(&self) -> u128 {
+    pub fn hash(&self) -> u64 {
         self.hash
     }
 
@@ -91,11 +91,11 @@ impl InjectionBinary {
         bp
     }
 
-    pub fn read_hash<P: AsRef<Path>>(&self, dir: P) -> Result<u128> {
+    pub fn read_hash<P: AsRef<Path>>(&self, dir: P) -> Result<u64> {
         self.binary_path(&dir).try_exists()?;
 
         let hash_bytes_slice = fs::read(self.hash_path(&dir))?;
-        let hash_bytes_array: [u8; 16] = hash_bytes_slice.try_into().map_err(|_| {
+        let hash_bytes_array: [u8; 8] = hash_bytes_slice.try_into().map_err(|_| {
             Error::new(
                 ErrorKind::InvalidData,
                 "File has injection binary hash of wrong length",
@@ -106,7 +106,7 @@ impl InjectionBinary {
         // not necessary. Injection binary and its
         // hash should stay local to one system
         // anyways.
-        let found_hash = u128::from_ne_bytes(hash_bytes_array);
+        let found_hash = u64::from_ne_bytes(hash_bytes_array);
         Ok(found_hash)
     }
 
