@@ -21,7 +21,7 @@ fn binary_hashes() -> Result<()> {
         spawn_rm(file_path, tmp_dir)?;
 
         for ib in INJECTION_BINARIES.iter() {
-            assert_eq!(ib.hash(), ib.read_hash(&tmp_dir)?);
+            assert_eq!(ib.hash(), ib.read_hash(tmp_dir)?);
             assert_ne!(ib.hash(), 0);
         }
 
