@@ -1,8 +1,8 @@
-use crc::{Crc, CRC_64_XZ};
 use std::ffi::OsStr;
 use std::fs::{self, create_dir_all};
 use std::io::{Error, ErrorKind, Result};
 use std::path::{Path, PathBuf};
+use xxhash_rust::const_xxh3::xxh3_64;
 
 /// Injection binary definition
 ///
@@ -37,7 +37,7 @@ pub struct InjectionBinary {
 
 impl InjectionBinary {
     pub const fn new(file_name: &'static str, bytes: &'static [u8]) -> Self {
-        let hash = Crc::<u64>::new(&CRC_64_XZ).checksum(bytes);
+        let hash = xxh3_64(bytes);
 
         Self {
             bytes,
