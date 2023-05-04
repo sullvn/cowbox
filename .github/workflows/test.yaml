@@ -61,7 +61,7 @@ jobs:
         run: cargo build --profile release
 
       - name: Typecheck and Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --all-targets --all-features --profile release -- -D warnings
 
       - name: Run tests
         run: cargo test --profile release
