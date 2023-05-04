@@ -71,7 +71,7 @@ impl InjectionBinary {
     /// directory.
     ///
     pub fn binary_path<P: AsRef<Path>>(&self, dir: P) -> PathBuf {
-        [dir.as_ref(), self.file_name.as_ref()].iter().collect()
+        dir.as_ref().join(self.file_name)
     }
 
     /// Check if everything exists correctly
