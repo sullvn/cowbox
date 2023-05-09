@@ -31,5 +31,6 @@ pub enum Args {
 #[derive(Parser)]
 pub struct Run {
     #[arg(required = true)]
-    pub command: Vec<OsString>,
+    pub program: OsString,
+    pub program_args: Vec<OsString>,
 }
