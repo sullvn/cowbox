@@ -21,15 +21,18 @@ use std::ffi::OsString;
 #[derive(Parser)]
 #[command(verbatim_doc_comment)]
 pub enum Args {
-    Run(Run),
+    Exec(Exec),
 }
 
 ///
-/// Run a command with sandboxed
-/// file system access
+/// Execute a program in sandbox,
+/// directly without shell
+///
+/// Arguments are passed in
+/// directly to the program.
 ///
 #[derive(Parser)]
-pub struct Run {
+pub struct Exec {
     #[arg(required = true)]
     pub program: OsString,
     pub program_args: Vec<OsString>,

@@ -7,10 +7,10 @@ use std::io::Result;
 use std::process::ExitCode;
 
 use args::Args;
-use subcommands::run;
+use subcommands::exec;
 
 fn main() -> Result<ExitCode> {
     match Args::parse() {
-        Args::Run(args) => run(args),
+        Args::Exec(args) => exec(args),
     }
 }

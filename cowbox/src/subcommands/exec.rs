@@ -13,7 +13,7 @@ use crate::cache_dir::cache_dir_path;
 ///
 /// [0]: https://en.wikipedia.org/wiki/Exec_(system_call)
 ///
-pub fn run(args: args::Run) -> Result<ExitCode> {
+pub fn exec(args: args::Exec) -> Result<ExitCode> {
     let exit_code_i32 = spawn(cache_dir_path()?, args.program, args.program_args)?;
 
     // Smush spawned process return code
