@@ -1,4 +1,5 @@
 use cowbox_testing::{run_test_rm, RmResult};
+use std::env::var_os;
 use std::ffi::OsString;
 use std::io::Result;
 use std::path::{Path, PathBuf};
@@ -9,13 +10,13 @@ const TEST_BINARY: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME"))
 const TMP_DIR: &str = env!("CARGO_TARGET_TMPDIR");
 
 #[cfg(unix)]
-const HOME_ENV_KEY: &str = "XDG_CONFIG_HOME";
+const HOME_ENV_KEY: &str = "XDG_CACHE_HOME";
 
 #[cfg(windows)]
 const HOME_ENV_KEY: &str = "LOCALAPPDATA";
 
 #[test]
-fn sandboxed_rm() -> Result<()> {
+fn exec_sandboxed_rm() -> Result<()> {
     //
     // Control -- Not sandboxed
     //
@@ -34,10 +35,15 @@ fn sandboxed_rm() -> Result<()> {
     let rm_result = run_test_rm(TMP_DIR, |file_path, tmp_dir| {
         let (program, args) = rm_program_and_args(file_path);
         let mut cmd = Command::new(TEST_BINARY);
-        cmd.arg(program)
+        cmd.arg("exec")
+            .arg(program)
             .args(args)
             .env_clear()
-            .env(HOME_ENV_KEY, tmp_dir.path());
+            .env(HOME_ENV_KEY, tmp_dir.path())
+            .env(
+                "PATH",
+                var_os("PATH").expect("$PATH environment variable is unset"),
+            );
 
         Ok(cmd.status()?.success())
     })?;
@@ -51,13 +57,20 @@ fn cache_dir_created() -> Result<()> {
     run_test_rm(TMP_DIR, |file_path, tmp_dir| {
         let (program, args) = rm_program_and_args(file_path);
         let mut cmd = Command::new(TEST_BINARY);
-        cmd.arg(program)
+        cmd.arg("exec")
+            .arg(program)
             .args(args)
             .env_clear()
-            .env(HOME_ENV_KEY, tmp_dir.path());
+            .env(HOME_ENV_KEY, tmp_dir.path())
+            .env(
+                "PATH",
+                var_os("PATH").expect("$PATH environment variable is unset"),
+            );
         let success = cmd.status()?.success();
+        assert!(success, "command failed");
 
         let cache_dir = cache_dir_path(tmp_dir.path());
+        dbg!(&cache_dir);
         assert!(cache_dir.is_dir(), "cache directory was not created");
 
         Ok(success)
