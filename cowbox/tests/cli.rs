@@ -93,15 +93,13 @@ fn rm_program_and_args(file_path: &Path) -> (OsString, Vec<OsString>) {
 }
 
 #[cfg(unix)]
-fn cache_dir_path(home_path: &Path) -> PathBuf {
-    [home_path, ".cache".as_ref(), PROJECT_NAME.as_ref()]
-        .iter()
-        .collect()
+fn cache_dir_path(xdg_cache_home: &Path) -> PathBuf {
+    xdg_cache_home.join(PROJECT_NAME)
 }
 
 #[cfg(windows)]
-fn cache_dir_path(home_path: &Path) -> PathBuf {
-    [home_path, PROJECT_NAME.as_ref(), "cache".as_ref()]
+fn cache_dir_path(local_app_data: &Path) -> PathBuf {
+    [local_app_data, PROJECT_NAME.as_ref(), "cache".as_ref()]
         .iter()
         .collect()
 }
