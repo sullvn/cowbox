@@ -6,11 +6,11 @@ use clap::Parser;
 use std::io::Result;
 use std::process::ExitCode;
 
-use args::Args;
+use args::CliArgs;
 use subcommands::exec;
 
 fn main() -> Result<ExitCode> {
-    match Args::parse() {
-        Args::Exec(args) => exec(args),
+    match CliArgs::parse() {
+        CliArgs::Exec(args) => exec(args),
     }
 }

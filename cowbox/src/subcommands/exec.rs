@@ -2,7 +2,7 @@ use cowbox::spawn;
 use std::io::{Error, ErrorKind, Result};
 use std::process::ExitCode;
 
-use crate::args;
+use crate::args::ExecArgs;
 use crate::cache_dir::cache_dir_path;
 
 /// Execute program within sandbox
@@ -13,7 +13,7 @@ use crate::cache_dir::cache_dir_path;
 ///
 /// [0]: https://en.wikipedia.org/wiki/Exec_(system_call)
 ///
-pub fn exec(args: args::Exec) -> Result<ExitCode> {
+pub fn exec(args: ExecArgs) -> Result<ExitCode> {
     let exit_code_i32 = spawn(cache_dir_path()?, args.program, args.program_args)?;
 
     // Smush spawned process return code

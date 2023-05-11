@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Args, Parser};
 use std::ffi::OsString;
 
 ///
@@ -20,8 +20,8 @@ use std::ffi::OsString;
 ///
 #[derive(Parser)]
 #[command(verbatim_doc_comment)]
-pub enum Args {
-    Exec(Exec),
+pub enum CliArgs {
+    Exec(ExecArgs),
 }
 
 ///
@@ -31,9 +31,11 @@ pub enum Args {
 /// Arguments are passed in
 /// directly to the program.
 ///
-#[derive(Parser)]
-pub struct Exec {
+#[derive(Args)]
+pub struct ExecArgs {
     #[arg(required = true)]
     pub program: OsString,
+
+    #[arg(allow_hyphen_values = true)]
     pub program_args: Vec<OsString>,
 }
