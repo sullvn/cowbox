@@ -82,9 +82,13 @@ pub fn cache_dir_path() -> Result<PathBuf> {
         ErrorKind::NotFound,
         "LOCALAPPDATA environment variable is not set",
     ))?;
-    let path = [local_app_data.as_os_str(), CACHE_DIR_NAME.as_ref()]
-        .iter()
-        .collect();
+    let path = [
+        local_app_data.as_os_str(),
+        CACHE_DIR_NAME.as_ref(),
+        "cache".as_ref(),
+    ]
+    .iter()
+    .collect();
 
     Ok(path)
 }
