@@ -20,10 +20,11 @@ fn exec_sandboxed_rm() -> Result<()> {
     //
     // Control -- Not sandboxed
     //
-    let rm_result = run_test_rm(TMP_DIR, |file_path, _| {
+    let rm_result = run_test_rm(TMP_DIR, |file_path, tmp_dir| {
         let (program, args) = rm_program_and_args(file_path);
         let mut cmd = Command::new(program);
-        cmd.args(args).env_clear();
+        cmd.args(args);
+        sanitize_environment(&mut cmd, tmp_dir.path());
 
         Ok(cmd.status()?.success())
     })?;
@@ -35,15 +36,8 @@ fn exec_sandboxed_rm() -> Result<()> {
     let rm_result = run_test_rm(TMP_DIR, |file_path, tmp_dir| {
         let (program, args) = rm_program_and_args(file_path);
         let mut cmd = Command::new(TEST_BINARY);
-        cmd.arg("exec")
-            .arg(program)
-            .args(args)
-            .env_clear()
-            .env(HOME_ENV_KEY, tmp_dir.path())
-            .env(
-                "PATH",
-                var_os("PATH").expect("$PATH environment variable is unset"),
-            );
+        cmd.arg("exec").arg(program).args(args);
+        sanitize_environment(&mut cmd, tmp_dir.path());
 
         Ok(cmd.status()?.success())
     })?;
@@ -57,20 +51,13 @@ fn cache_dir_created() -> Result<()> {
     run_test_rm(TMP_DIR, |file_path, tmp_dir| {
         let (program, args) = rm_program_and_args(file_path);
         let mut cmd = Command::new(TEST_BINARY);
-        cmd.arg("exec")
-            .arg(program)
-            .args(args)
-            .env_clear()
-            .env(HOME_ENV_KEY, tmp_dir.path())
-            .env(
-                "PATH",
-                var_os("PATH").expect("$PATH environment variable is unset"),
-            );
+        cmd.arg("exec").arg(program).args(args);
+        sanitize_environment(&mut cmd, tmp_dir.path());
+
         let success = cmd.status()?.success();
         assert!(success, "command failed");
 
         let cache_dir = cache_dir_path(tmp_dir.path());
-        dbg!(&cache_dir);
         assert!(cache_dir.is_dir(), "cache directory was not created");
 
         Ok(success)
@@ -90,6 +77,22 @@ fn rm_program_and_args(file_path: &Path) -> (OsString, Vec<OsString>) {
     powershell_rm.push(file_path);
 
     ("powershell".into(), vec!["-Command".into(), powershell_rm])
+}
+
+fn sanitize_environment(cmd: &mut Command, tmp_dir: &Path) {
+    cmd.env_clear().env(HOME_ENV_KEY, tmp_dir).env(
+        "PATH",
+        var_os("PATH").expect("`PATH` environment variable is unset"),
+    );
+
+    // `SystemRoot` environment variable is required
+    // for Windows PowerShell to work. Not sure why.
+    if cfg!(windows) {
+        cmd.env(
+            "SystemRoot",
+            var_os("SystemRoot").expect("`SystemRoot` environment variable is unset"),
+        );
+    }
 }
 
 #[cfg(unix)]
