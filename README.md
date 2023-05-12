@@ -1,13 +1,13 @@
-<div align="center">
-  <font size="7">
+<h1>
+  <div align="center">
     <br />
     <br />
     🐮📦
     <br />
     <br />
     &nbsp;
-  </font>
-</div>
+  </div>
+</h1>
 
 Safely run any program without your data
 getting borked.
