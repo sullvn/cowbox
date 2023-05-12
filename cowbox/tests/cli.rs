@@ -1,4 +1,4 @@
-use cowbox_testing::{run_test_rm, RmResult};
+use cowbox_testing::{run_test_rm, RmResult, TempDir};
 use std::env::var_os;
 use std::ffi::OsString;
 use std::io::Result;
@@ -66,6 +66,66 @@ fn cache_dir_created() -> Result<()> {
     Ok(())
 }
 
+#[test]
+#[cfg(unix)]
+fn xdg_cache_dir_precedence() -> Result<()> {
+    //
+    // $HOME is correctly used if $XDG_CACHE_HOME
+    // is unavailable
+    //
+    run_test_rm(TMP_DIR, |file_path, tmp_dir| {
+        let (program, args) = rm_program_and_args(file_path);
+        let mut cmd = Command::new(TEST_BINARY);
+        cmd.arg("exec").arg(program).args(args);
+        sanitize_environment(&mut cmd, tmp_dir.path());
+
+        cmd.env_remove("XDG_CACHE_HOME");
+        cmd.env("HOME", tmp_dir.path());
+
+        let success = cmd.status()?.success();
+        assert!(success, "command failed");
+
+        let cache_dir = home_cache_dir_path(tmp_dir.path());
+        assert!(cache_dir.is_dir(), "cache directory was not created");
+
+        Ok(success)
+    })?;
+
+    //
+    // $HOME is not used if $XDG_CACHE_HOME
+    // is available
+    //
+    run_test_rm(TMP_DIR, |file_path, tmp_dir| {
+        let (program, args) = rm_program_and_args(file_path);
+        let mut cmd = Command::new(TEST_BINARY);
+        cmd.arg("exec").arg(program).args(args);
+        sanitize_environment(&mut cmd, tmp_dir.path());
+
+        let wrong_tmp_dir = TempDir::new_in(TMP_DIR)?;
+        cmd.env("XDG_CACHE_HOME", tmp_dir.path());
+        cmd.env("HOME", wrong_tmp_dir.path());
+
+        let success = cmd.status()?.success();
+        assert!(success, "command failed");
+
+        let cache_dir_via_xdg = xdg_cache_dir_path(tmp_dir.path());
+        assert!(
+            cache_dir_via_xdg.is_dir(),
+            "cache directory was not created"
+        );
+
+        let cache_dir_via_home = home_cache_dir_path(wrong_tmp_dir.path());
+        assert!(
+            !cache_dir_via_home.is_dir(),
+            "HOME was incorrectly used to make cache dir"
+        );
+
+        Ok(success)
+    })?;
+
+    Ok(())
+}
+
 #[cfg(unix)]
 fn rm_program_and_args(file_path: &Path) -> (OsString, Vec<OsString>) {
     ("rm".into(), vec![file_path.into()])
@@ -97,12 +157,24 @@ fn sanitize_environment(cmd: &mut Command, tmp_dir: &Path) {
 
 #[cfg(unix)]
 fn cache_dir_path(xdg_cache_home: &Path) -> PathBuf {
-    xdg_cache_home.join(PROJECT_NAME)
+    xdg_cache_dir_path(xdg_cache_home)
 }
 
 #[cfg(windows)]
 fn cache_dir_path(local_app_data: &Path) -> PathBuf {
     [local_app_data, PROJECT_NAME.as_ref(), "cache".as_ref()]
+        .iter()
+        .collect()
+}
+
+#[cfg(unix)]
+fn xdg_cache_dir_path(xdg_cache_home: &Path) -> PathBuf {
+    xdg_cache_home.join(PROJECT_NAME)
+}
+
+#[cfg(unix)]
+fn home_cache_dir_path(home: &Path) -> PathBuf {
+    [home, ".cache".as_ref(), PROJECT_NAME.as_ref()]
         .iter()
         .collect()
 }
