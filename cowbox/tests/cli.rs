@@ -1,9 +1,12 @@
-use cowbox_testing::{run_test_rm, RmResult, TempDir};
+use cowbox_testing::{run_test_rm, RmResult};
 use std::env::var_os;
 use std::ffi::OsString;
 use std::io::Result;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+
+#[cfg(unix)]
+use cowbox_testing::TempDir;
 
 const PROJECT_NAME: &str = env!("CARGO_PKG_NAME");
 const TEST_BINARY: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")));
