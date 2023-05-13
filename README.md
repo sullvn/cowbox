@@ -8,6 +8,7 @@
     &nbsp;
   </div>
 </h1>
+<br />
 
 Safely run programs without your data
 getting borked.
@@ -117,17 +118,16 @@ records any changes the program makes.
 Created files are re-routed to a temporary
 place and recorded in the virtual filesystem.
 Removed files are merely marked as removed in
-the virtual filesystem, but that is it.
-
-File edits are done on a copy of the file.
-In theory, copying every file can consume
+the virtual filesystem, but that is it. File
+edits are done on a copy of the file. In
+theory, copying every file can consume
 significant resources. In practice, lazy
 copying and modern copy-on-write filesystems
 makes this very fast.
 
 Interception can be extended to other program
 behavior, such as network access. This is
-where *cowbox* will evolve to in the future.
+where *cowbox* will evolve in the future.
 
 
 ## Current Limitations
