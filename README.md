@@ -158,8 +158,8 @@ sandboxed:
   specifically supported by **Cowbox**,
   like Go (in the future).
 
-This is due **Cowbox** using dynamic library
-injection. This method is used as
+This is due to **Cowbox** using dynamic
+library injection. This method is used as
 cross-platform baseline, but isn't enough
 by itself.
 
@@ -185,8 +185,8 @@ platforms).
 
 ## You May Also Like
 
-- [shai][2] – a CLI assistant using AI
-- [pvw][3] – a CLI tool which interactively
+- [shai][2] – Command-line assistant using AI
+- [pvw][3] – Command-line tool which interactively
   previews command outputs
 
 
