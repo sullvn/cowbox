@@ -181,12 +181,12 @@ platforms).
 8. File and folder whitelisting
 9. Syscall hooking on Linux, Windows
 10. Network sandboxing
-11. Publish to [crates.io][https://crates.io]
+11. Publish to [crates.io][1]
 
 ## You May Also Like
 
-- [shai][1], a CLI assistant using AI
-- [pvw][2], a CLI tool which interactively
+- [shai][2] – a CLI assistant using AI
+- [pvw][3] – a CLI tool which interactively
   previews command outputs
 
 
@@ -199,5 +199,6 @@ platforms).
       for more information.
 
 [0]: https://www.docker.com
-[1]: https://github.com/sullvn/shai
-[2]: https://github.com/sullvn/pvw
+[1]: https://crates.io
+[2]: https://github.com/sullvn/shai
+[3]: https://github.com/sullvn/pvw
