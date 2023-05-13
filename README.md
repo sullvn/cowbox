@@ -10,7 +10,8 @@
 </h1>
 
 <div align="center">
-  🚧 <b>Not Ready for Use</b> 🚧
+  ![Not Ready for Use](https://img.shields.io/badge/-Not%20Ready%20for%20Use-orange?style=for-the-badge)
+  ![GitHub master branch status](https://img.shields.io/github/checks-status/sullvn/cowbox/master?style=for-the-badge)
 </div>
 <br />
 <br />
