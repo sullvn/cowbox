@@ -10,8 +10,12 @@
 </h1>
 
 <div align="center">
-  ![Not Ready for Use](https://img.shields.io/badge/-Not%20Ready%20for%20Use-orange?style=for-the-badge)
-  ![GitHub master branch status](https://img.shields.io/github/checks-status/sullvn/cowbox/master?style=for-the-badge)
+  <a href="#current-limitations">
+    <img src="https://img.shields.io/badge/-Not%20Ready%20for%20Use-orange?style=for-the-badge" alt="Not Ready for Use" />
+  </a>
+  <a href="https://github.com/sullvn/cowbox/actions/workflows/test.yaml?query=branch%3Amain">
+    <img src="https://img.shields.io/github/checks-status/sullvn/cowbox/main?style=for-the-badge" alt="Not Ready for Use" />
+  </a>
 </div>
 <br />
 <br />
