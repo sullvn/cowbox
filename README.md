@@ -11,13 +11,10 @@
 
 <div align="center">
   <a href="#current-limitations">
-    <img src="https://img.shields.io/badge/-Not%20Ready%20for%20Use-orange?style=for-the-badge" alt="Not Ready for Use" />
+    <img src="https://img.shields.io/badge/-Not%20Ready%20for%20Use-orange?style=for-the-badge&label=🚧" alt="Not Ready for Use" />
   </a>
   <a href="https://github.com/sullvn/cowbox/actions/workflows/test.yaml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/checks-status/sullvn/cowbox/main?style=for-the-badge" alt="Checks status" />
-  </a>
-  <a href="https://github.com/sullvn/cowbox/actions/workflows/test.yaml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/sullvn/cowbox/test.yml?branch=main&style=for-the-badge" alt="Tests status" />
+    <img src="https://img.shields.io/github/actions/workflow/status/sullvn/cowbox/test.yaml?branch=main&label=Tests&style=for-the-badge&logo=githubactions" alt="Tests status" />
   </a>
 </div>
 <br />
