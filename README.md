@@ -12,7 +12,7 @@
 Safely run programs without your data
 getting borked.
 
-**Cowbox** tricks programs into thinking
+*Cowbox* tricks programs into thinking
 they can create/edit/delete files on your
 system. In reality, they are working in
 a sandbox with your real data.
@@ -45,37 +45,18 @@ Krabby Patty Secret Formula
 
 ## Use Cases
 
-**Cowbox** is meant to be a time saver when
-running random commands or scripts. *Just Run
-It*<sup>:tm:</sup> instead of investigating
-the details.
+*Cowbox* saves you time when running random
+commands or scripts. *Just Run It*
+<sup>:tm:</sup> instead of manually
+investigating the details.
 
-Examples:
+Examples where sandboxing is useful:
 
 - Trying out that script from Stack Overflow
-- Letting an AI agent loose on your computer
+- Automating tasks with an AI agent
 - Blackbox debugging
 - Reverse engineering
 
-[Docker][0] and virtual machines are great at
-sandboxing programs, but they hide your real
-data and require significant setup. And if
-you mount your host filesystem in the guest,
-then you lose any safety guarantees.
-
-Some operating systems have capability
-systems. These are also great, but each
-system can require learning, setup, and
-modification of files.
-
-Filesystem snapshotting is also awesome,
-but is limited in features and isn't a tool
-by itself.
- 
-**Cowbox** is a cross-platform tool which
-borrows from all of these alternatives to
-make a brainless solution so you can
-*Just Run It*<sup>:tm:</sup>.
 
 ## Features
 
@@ -119,7 +100,7 @@ On Windows (in PowerShell):
 
 ## How It Works
 
-**Cowbox** puts itself between the target
+*Cowbox* puts itself between the target
 program and your operating system,
 intercepting every file access.
 
@@ -127,23 +108,26 @@ Interception is currently done via
 dynamic library injection[^2]. This uses the
 built-in operating system runtime linker to
 re-write parts of the program, in memory, on
-program load.
-
-Interception has effectively zero overhead
-when done in this way.
+program load. This method has almost zero
+performance overhead.
 
 A virtual filesystem is created which
 records any changes the program makes.
 
 Created files are re-routed to a temporary
 place and recorded in the virtual filesystem.
-Removed files are marked as removed in the
-virtual filesystem, but that is it.
+Removed files are merely marked as removed in
+the virtual filesystem, but that is it.
 
-File edits are done on a file copy. In
-theory, this can be slow. In practice,
-using memory and copy-on-write filesystems
+File edits are done on a copy of the file.
+In theory, copying every file can consume
+significant resources. In practice, lazy
+copying and modern copy-on-write filesystems
 makes this very fast.
+
+Interception can be extended to other program
+behavior, such as network access. This is
+where *cowbox* will evolve to in the future.
 
 
 ## Current Limitations
@@ -153,20 +137,49 @@ lack of universal program support. Only
 programs which fulfill the following can be
 sandboxed:
 
-- Dynamically linked
+- Dynamically linked (most programs)
 - Uses libc (most programs). Or is
-  specifically supported by **Cowbox**,
+  specifically supported by *cowbox*,
   like Go (in the future).
 
-This is due to **Cowbox** using dynamic
+This is due to *cowbox* using dynamic
 library injection. This method is used as
 cross-platform baseline, but isn't enough
 by itself.
 
-Universal support can be done by utilizing
-syscall hooking (Linux, Windows), or binary
-re-writing on the instruction level (all
-platforms).
+Universal support can be achieved by
+different advanced methods on a
+per-platform basis. Examples are OS-assisted
+syscall hooks (Linux, Windows) or binary
+rewriting (all).
+
+There is also other behavior you may want
+sandboxed, such as network or peripheral
+access. *Cowbox* does not support this at
+the moment, focusing on file access.
+With that said, it can naturally be
+extended to do so.
+
+
+## As Compared to X
+
+- [**Docker**][0] and VMs virtualize an entire
+  OS instead of creating an overlay over your
+  own. You can choose to mount your local
+  data, but then are at risk of data borking
+  once again.
+- **File system snapshots** prevent your data
+  from being mutilated forever, but leaves
+  your files in a broken state until manual
+  intervention.
+- [**WINE**][1] may seem pretty different,
+  but actually it is pretty similar to
+  *cowbox*! Both intercept program
+  behavior at a low-level, but for different
+  purposes. *WINE* creates a Window API
+  shim so you can run Windows programs,
+  while *cowbox* sandboxes destructive
+  operations.
 
 
 ## Roadmap
@@ -181,13 +194,28 @@ platforms).
 8. File and folder whitelisting
 9. Syscall hooking on Linux, Windows
 10. Network sandboxing
-11. Publish to [crates.io][1]
+11. Publish to [crates.io][2]
+
 
 ## You May Also Like
 
-- [shai][2] – Command-line assistant using AI
-- [pvw][3] – Command-line tool which interactively
+- [shai][3] – Command-line assistant using AI
+- [pvw][4] – Command-line tool which interactively
   previews command outputs
+
+
+<div align="center">
+  <br />
+  <br />
+  <br />
+  <br />
+  🐮📦
+  <br />
+  <br />
+  <br />
+  <br />
+  &nbsp;
+</div>
 
 
 [^1]: Universal program support is planned.
@@ -199,6 +227,7 @@ platforms).
       for more information.
 
 [0]: https://www.docker.com
-[1]: https://crates.io
-[2]: https://github.com/sullvn/shai
-[3]: https://github.com/sullvn/pvw
+[1]: https://www.winehq.org
+[2]: https://crates.io
+[3]: https://github.com/sullvn/shai
+[4]: https://github.com/sullvn/pvw
