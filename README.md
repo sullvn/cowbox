@@ -173,7 +173,10 @@ extended to do so.
 
 ## As Compared to X
 
-- [**Docker**][0] and VMs virtualize an entire
+- [**try**][0] is a simple alternative to
+  the `cowbox` CLI if you're on Linux and
+  need some basic filesystem sandboxing.
+- [**Docker**][1] and VMs virtualize an entire
   OS instead of creating an overlay over your
   own. You can choose to mount your local
   data, but then are at risk of data borking
@@ -182,7 +185,7 @@ extended to do so.
   from being mutilated forever, but leaves
   your files in a broken state until manual
   intervention.
-- [**WINE**][1] may seem pretty different,
+- [**WINE**][2] may seem pretty different,
   but actually it is pretty similar to
   *cowbox*! Both intercept program
   behavior at a low-level, but for different
@@ -202,16 +205,18 @@ extended to do so.
 6. Intercept Go programs
 7. Support ARM
 8. File and folder whitelisting
-9. Syscall hooking on Linux, Windows
-10. Network sandboxing
-11. Publish to [crates.io][2]
+9. Investigate using [`overlayfs`][3] on Linux
+10. Syscall hooking on Linux, Windows
+11. Network sandboxing
+12. Publish to [crates.io][4]
 
 
 ## You May Also Like
 
-- [shai][3] – Command-line assistant using AI
-- [pvw][4] – Command-line tool which interactively
-  previews command outputs
+- [**shai**][5] – Command-line assistant
+  using AI
+- [**pvw**][6] – Command-line tool which
+  interactively previews command outputs
 
 
 <div align="center">
@@ -236,8 +241,10 @@ extended to do so.
       [Current Limitations](#current-limitations)
       for more information.
 
-[0]: https://www.docker.com
-[1]: https://www.winehq.org
-[2]: https://crates.io
-[3]: https://github.com/sullvn/shai
-[4]: https://github.com/sullvn/pvw
+[0]: https://github.com/binpash/try
+[1]: https://www.docker.com
+[2]: https://www.winehq.org
+[3]: https://docs.kernel.org/filesystems/overlayfs.html
+[4]: https://crates.io
+[5]: https://github.com/sullvn/shai
+[6]: https://github.com/sullvn/pvw
