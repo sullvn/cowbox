@@ -2,6 +2,7 @@ mod as_str;
 mod injection;
 mod prepare_program;
 mod spawn_process;
+mod vfs;
 
 use std::ffi::OsStr;
 use std::io::Result;
